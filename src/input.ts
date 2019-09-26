@@ -55,7 +55,7 @@ export class KeyboardInputSource implements TetrisInputEventSource {
             return;
         }
         for (const action of this.keyToActionsMap.get(e.key)!) {
-            this.dispatcher.dispatch({ type: action, keyDown: true});
+            this.dispatcher.dispatch({type: action, keyDown: true});
         }
     }
 
@@ -64,7 +64,47 @@ export class KeyboardInputSource implements TetrisInputEventSource {
             return;
         }
         for (const action of this.keyToActionsMap.get(e.key)!) {
-            this.dispatcher.dispatch({ type: action, keyDown: false});
+            this.dispatcher.dispatch({type: action, keyDown: false});
         }
     }
 }
+
+export interface KeyMap {
+    readonly softDropKeys: List<string>;
+    readonly hardDropKeys: List<string>;
+    readonly moveLeftKeys: List<string>;
+    readonly moveRightKeys: List<string>;
+    readonly rotateCwKeys: List<string>;
+    readonly rotateCcwKeys: List<string>;
+    readonly holdKeys: List<string>;
+}
+
+function addAllKeysToAction(map: Map<string, List<TetrisInputEventType>>, keyCodes: List<string>, action: TetrisInputEventType): Map<string, List<TetrisInputEventType>> {
+    let keyToAction: Map<string, List<TetrisInputEventType>> = map;
+    keyCodes.forEach(keyCode => {
+        keyToAction = keyToAction.set(keyCode, keyToAction.get(keyCode, List()).push(action));
+    });
+    return keyToAction;
+}
+
+export function parseKeyMap(keyMap: KeyMap): Map<string, List<TetrisInputEventType>> {
+    let keyToAction: Map<string, List<TetrisInputEventType>> = Map();
+    keyToAction = addAllKeysToAction(keyToAction, keyMap.softDropKeys, TetrisInputEventType.SOFT_DROP);
+    keyToAction = addAllKeysToAction(keyToAction, keyMap.hardDropKeys, TetrisInputEventType.HARD_DROP);
+    keyToAction = addAllKeysToAction(keyToAction, keyMap.moveLeftKeys, TetrisInputEventType.MOVE_L);
+    keyToAction = addAllKeysToAction(keyToAction, keyMap.moveRightKeys, TetrisInputEventType.MOVE_R);
+    keyToAction = addAllKeysToAction(keyToAction, keyMap.rotateCwKeys, TetrisInputEventType.ROTATE_CW);
+    keyToAction = addAllKeysToAction(keyToAction, keyMap.rotateCcwKeys, TetrisInputEventType.ROTATE_CCW);
+    keyToAction = addAllKeysToAction(keyToAction, keyMap.holdKeys, TetrisInputEventType.HOLD);
+    return keyToAction;
+}
+
+export const DEFAULT_KEYMAP: KeyMap = {
+    hardDropKeys: List([" "]),
+    softDropKeys: List(["ArrowDown"]),
+    moveLeftKeys: List(["ArrowLeft"]),
+    moveRightKeys: List(["ArrowRight"]),
+    rotateCwKeys: List(["x", "ArrowUp"]),
+    rotateCcwKeys: List(["z"]),
+    holdKeys: List(["Shift"]),
+};

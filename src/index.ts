@@ -1,11 +1,8 @@
 import {TetrisGame} from "./tetrisGame";
-import {KeyboardInputSource, TetrisInputEventType} from "./input";
-import {List, Map} from "immutable";
+import {DEFAULT_KEYMAP, KeyboardInputSource, parseKeyMap} from "./input";
 
 const game: TetrisGame = new TetrisGame();
-const keyMap: Map<string, List<TetrisInputEventType>> = Map([["a", List([TetrisInputEventType.HARD_DROP])]]);
-console.log(keyMap);
-const kbd: KeyboardInputSource = new KeyboardInputSource(keyMap);
+const kbd: KeyboardInputSource = new KeyboardInputSource(parseKeyMap(DEFAULT_KEYMAP));
 kbd.getInputEventDispatcher().registerHandler(game.getInputEventHandler());
 
 kbd.init();
