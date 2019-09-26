@@ -51,19 +51,19 @@ export class KeyboardInputSource implements TetrisInputEventSource {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        if (e.repeat || !this.keyToActionsMap.has(e.key)) {
+        if (e.repeat || !this.keyToActionsMap.has(e.code)) {
             return;
         }
-        for (const action of this.keyToActionsMap.get(e.key)!) {
+        for (const action of this.keyToActionsMap.get(e.code)!) {
             this.dispatcher.dispatch({type: action, keyDown: true});
         }
     }
 
     private handleKeyUp(e: KeyboardEvent): void {
-        if (e.repeat || !this.keyToActionsMap.has(e.key)) {
+        if (e.repeat || !this.keyToActionsMap.has(e.code)) {
             return;
         }
-        for (const action of this.keyToActionsMap.get(e.key)!) {
+        for (const action of this.keyToActionsMap.get(e.code)!) {
             this.dispatcher.dispatch({type: action, keyDown: false});
         }
     }
@@ -99,12 +99,15 @@ export function parseKeyMap(keyMap: KeyMap): Map<string, List<TetrisInputEventTy
     return keyToAction;
 }
 
+/**
+ * Maps lists of keys (event.code) to Tetris actions in a human readable+modifiable way.
+ */
 export const DEFAULT_KEYMAP: KeyMap = {
-    hardDropKeys: List([" "]),
+    hardDropKeys: List(["Space"]),
     softDropKeys: List(["ArrowDown"]),
     moveLeftKeys: List(["ArrowLeft"]),
     moveRightKeys: List(["ArrowRight"]),
-    rotateCwKeys: List(["x", "ArrowUp"]),
-    rotateCcwKeys: List(["z"]),
-    holdKeys: List(["Shift"]),
+    rotateCwKeys: List(["KeyX", "ArrowUp"]),
+    rotateCcwKeys: List(["KeyZ"]),
+    holdKeys: List(["ShiftLeft"]),
 };
