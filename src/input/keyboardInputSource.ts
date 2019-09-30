@@ -1,32 +1,13 @@
-import {EventDispatcher, EventHandler} from "./events";
 import {List, Map} from "immutable";
+import {Dispatcher} from "../util/dispatcher";
+import {TetrisInputEvent, TetrisInputEventType} from "../events/inputEvent";
 
-export enum TetrisInputEventType {
-    SOFT_DROP,
-    HARD_DROP,
-    MOVE_L,
-    MOVE_R,
-    ROTATE_CW,
-    ROTATE_CCW,
-    HOLD,
-}
-
-export interface TetrisInputEvent {
-    readonly type: TetrisInputEventType;
-    readonly keyDown: boolean;
-}
-
-export interface TetrisInputEventSource {
-    getInputEventDispatcher(): EventDispatcher<TetrisInputEvent>;
-}
-
-export interface TetrisInputEventSink {
-    getInputEventHandler(): EventHandler<TetrisInputEvent>;
-}
-
-export class KeyboardInputSource implements TetrisInputEventSource {
-    private dispatcher: EventDispatcher<TetrisInputEvent> = new EventDispatcher<TetrisInputEvent>();
-    private keyToActionsMap: Map<string, List<TetrisInputEventType>>;
+/**
+ * Generates TetrisInputEvents from js keyup/keydown listeners.
+ */
+export class KeyboardInputSource {
+    private readonly dispatcher: Dispatcher<TetrisInputEvent> = new Dispatcher<TetrisInputEvent>();
+    private readonly keyToActionsMap: Map<string, List<TetrisInputEventType>>;
 
     // Necessary because passing this.handleKeyDown to addEventListener directly breaks "this" keyword.
     private keyDownListener: (e: KeyboardEvent) => void = (e) => this.handleKeyDown(e);
@@ -36,8 +17,8 @@ export class KeyboardInputSource implements TetrisInputEventSource {
         this.keyToActionsMap = keyToActionsMap;
     }
 
-    getInputEventDispatcher(): EventDispatcher<TetrisInputEvent> {
-        return this.dispatcher;
+    registerInputHandler(callback: (e: TetrisInputEvent) => void): void {
+        this.dispatcher.registerCallback(callback);
     }
 
     init() {
