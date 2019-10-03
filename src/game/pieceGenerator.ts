@@ -52,7 +52,7 @@ export class BagPieceGenerator implements PieceGenerator {
             };
         }
 
-        const shuffleResult = this.shuffle(this.bag, this.lcg);
+        const shuffleResult = BagPieceGenerator.shuffle(this.bag, this.lcg);
 
         return {
             generator: new BagPieceGenerator(1, shuffleResult.newBag, shuffleResult.newLCG),
@@ -64,6 +64,7 @@ export class BagPieceGenerator implements PieceGenerator {
     private static shuffle(bag: List<PiecePrototype>, lcg: LCG): { newBag: List<PiecePrototype>; newLCG: LCG } {
         let curLCG = lcg;
         const bagArray: PiecePrototype[] = bag.toArray();
+        // Fisher-Yates shuffle.
         for (let i = bag.size - 1; i > 0; i--) {
             const lcgNextResult = curLCG.next();
             const j = toRange(lcgNextResult.nextSeed, bag.size);
