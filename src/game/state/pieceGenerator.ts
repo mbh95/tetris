@@ -35,6 +35,10 @@ export class BagPieceGenerator implements PieceGenerator {
         this.lcg = lcg;
     }
 
+    static BagPieceGenerator(bag: List<PiecePrototype>, lcg: LCG): BagPieceGenerator {
+        return new BagPieceGenerator(bag.size, bag, lcg);
+    }
+
     next(): { generator: PieceGenerator; pieceProto: PiecePrototype } {
         if (this.nextIndex < this.bag.size) {
             return {
