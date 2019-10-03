@@ -1,25 +1,18 @@
-import {TetrisGame} from "./game/tetrisGame";
-import {DEFAULT_KEYMAP, KeyboardInputSource, parseKeyMap} from "./input/keyboardInputSource";
-import {VirtualGamepad} from "./input/virtualGamepad";
+import {PracticeScreen} from "./screens/practiceScreen";
 
-const game: TetrisGame = new TetrisGame();
-const kbd: KeyboardInputSource = new KeyboardInputSource(parseKeyMap(DEFAULT_KEYMAP));
-const virtualGamepad: VirtualGamepad = new VirtualGamepad(0.15, 30);
+const practiceScreen = new PracticeScreen();
 
-kbd.registerInputHandler(virtualGamepad.inputHandler);
-virtualGamepad.registerActionHandler(game.tetrisActionCallback);
-
-kbd.init();
+practiceScreen.init();
 
 // Main loop
 let prev: number = performance.now();
 
-function update() {
+function update(): void {
     const now: number = performance.now();
     const dt = (now - prev) / 1000.0;
-    virtualGamepad.update(dt);
-    game.update(dt);
+    practiceScreen.update(dt);
     prev = now;
+    console.log(1.0 / (dt == 0 ? 0.0000001 : dt));
     window.requestAnimationFrame(update);
 }
 

@@ -1,6 +1,6 @@
-import {Piece} from "./state/piece";
-import {Matrix} from "./state/matrix";
-import {Position} from "./state/position";
+import {Piece} from "./piece";
+import {Matrix} from "./matrix";
+import {Position} from "./position";
 import {List} from "immutable";
 
 export const DIR_UP = new Position({row: 1, col: 0});
@@ -10,7 +10,7 @@ export const DIR_RIGHT = new Position({row: 0, col: 1});
 
 export const ALL_DIRECTIONS: List<Position> = List([DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT]);
 
-export function isPieceOnGround(piece: Piece, matrix: Matrix) {
+export function isPieceOnGround(piece: Piece, matrix: Matrix): boolean {
     return matrix.isPieceValid(piece) && !matrix.isPieceValid(piece.translated(new Position({row: -1, col: 0})));
 }
 

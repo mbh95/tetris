@@ -2,54 +2,6 @@ import {List, Map} from "immutable";
 import {Dispatcher} from "../util/dispatcher";
 import {TetrisInputEvent, TetrisInputEventType} from "../events/inputEvent";
 
-/**
- * Generates TetrisInputEvents from js keyup/keydown listeners.
- */
-export class KeyboardInputSource {
-    private readonly dispatcher: Dispatcher<TetrisInputEvent> = new Dispatcher<TetrisInputEvent>();
-    private readonly keyToActionsMap: Map<string, List<TetrisInputEventType>>;
-
-    // Necessary because passing this.handleKeyDown to addEventListener directly breaks "this" keyword.
-    private keyDownListener: (e: KeyboardEvent) => void = (e) => this.handleKeyDown(e);
-    private keyUpListener: (e: KeyboardEvent) => void = (e) => this.handleKeyUp(e);
-
-    constructor(keyToActionsMap: Map<string, List<TetrisInputEventType>>) {
-        this.keyToActionsMap = keyToActionsMap;
-    }
-
-    registerInputHandler(callback: (e: TetrisInputEvent) => void): void {
-        this.dispatcher.registerCallback(callback);
-    }
-
-    init() {
-        document.addEventListener('keydown', this.keyDownListener);
-        document.addEventListener('keyup', this.keyUpListener);
-    }
-
-    tearDown() {
-        document.removeEventListener('keydown', this.keyDownListener);
-        document.removeEventListener('keyup', this.keyUpListener);
-    }
-
-    private handleKeyDown(e: KeyboardEvent): void {
-        if (e.repeat || !this.keyToActionsMap.has(e.code)) {
-            return;
-        }
-        for (const action of this.keyToActionsMap.get(e.code)!) {
-            this.dispatcher.dispatch({type: action, keyDown: true});
-        }
-    }
-
-    private handleKeyUp(e: KeyboardEvent): void {
-        if (e.repeat || !this.keyToActionsMap.has(e.code)) {
-            return;
-        }
-        for (const action of this.keyToActionsMap.get(e.code)!) {
-            this.dispatcher.dispatch({type: action, keyDown: false});
-        }
-    }
-}
-
 export interface KeyMap {
     readonly softDropKeys: List<string>;
     readonly hardDropKeys: List<string>;
@@ -92,3 +44,56 @@ export const DEFAULT_KEYMAP: KeyMap = {
     rotateCcwKeys: List(["KeyZ"]),
     holdKeys: List(["ShiftLeft"]),
 };
+
+/**
+ * Generates TetrisInputEvents from js keyup/keydown listeners.
+ */
+export class KeyboardInputSource {
+    private readonly dispatcher: Dispatcher<TetrisInputEvent> = new Dispatcher<TetrisInputEvent>();
+    private readonly keyToActionsMap: Map<string, List<TetrisInputEventType>>;
+
+    // Necessary because passing this.handleKeyDown to addEventListener directly breaks "this" keyword.
+    private keyDownListener: (e: KeyboardEvent) => void = (e) => this.handleKeyDown(e);
+    private keyUpListener: (e: KeyboardEvent) => void = (e) => this.handleKeyUp(e);
+
+    constructor(keyToActionsMap?: Map<string, List<TetrisInputEventType>>) {
+        if (keyToActionsMap === undefined) {
+            keyToActionsMap = parseKeyMap(DEFAULT_KEYMAP);
+        }
+        this.keyToActionsMap = keyToActionsMap;
+    }
+
+    registerInputHandler(callback: (e: TetrisInputEvent) => void): void {
+        this.dispatcher.registerCallback(callback);
+    }
+
+    init(): void {
+        document.addEventListener('keydown', this.keyDownListener);
+        document.addEventListener('keyup', this.keyUpListener);
+    }
+
+    tearDown(): void {
+        document.removeEventListener('keydown', this.keyDownListener);
+        document.removeEventListener('keyup', this.keyUpListener);
+    }
+
+    private handleKeyDown(e: KeyboardEvent): void {
+        if (e.repeat || !this.keyToActionsMap.has(e.code)) {
+            return;
+        }
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        for (const action of this.keyToActionsMap.get(e.code)!) {
+            this.dispatcher.dispatch({type: action, keyDown: true});
+        }
+    }
+
+    private handleKeyUp(e: KeyboardEvent): void {
+        if (e.repeat || !this.keyToActionsMap.has(e.code)) {
+            return;
+        }
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        for (const action of this.keyToActionsMap.get(e.code)!) {
+            this.dispatcher.dispatch({type: action, keyDown: false});
+        }
+    }
+}
