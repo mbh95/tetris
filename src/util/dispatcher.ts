@@ -1,17 +1,17 @@
 import {Set} from "immutable";
 
 export class Dispatcher<T> {
-    private registeredCallbacks: Set<(e: T)=>void>;
+    private registeredCallbacks: Set<(e: T) => void>;
 
     constructor() {
         this.registeredCallbacks = Set();
     }
 
-    registerCallback(callback: (e: T)=>void): void {
+    registerCallback(callback: (e: T) => void): void {
         this.registeredCallbacks = this.registeredCallbacks.add(callback);
     }
 
-    removeRegisteredCallback(callback: (e: T)=>void): void {
+    removeRegisteredCallback(callback: (e: T) => void): void {
         this.registeredCallbacks.remove(callback);
     }
 
