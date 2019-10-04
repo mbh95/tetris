@@ -67,7 +67,7 @@ export class BagPieceGenerator implements PieceGenerator {
         // Fisher-Yates shuffle.
         for (let i = bag.size - 1; i > 0; i--) {
             const lcgNextResult = curLCG.next();
-            const j = toRange(lcgNextResult.nextSeed, bag.size);
+            const j = toRange(lcgNextResult.nextSeed, i);
             curLCG = lcgNextResult.nextLCG;
             const temp = bagArray[i];
             bagArray[i] = bagArray[j];
