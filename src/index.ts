@@ -1,4 +1,5 @@
 import {PracticeScreen} from "./screens/practiceScreen";
+// TODO: Use typings-for-css-modules-loader for real imports. See https://medium.com/@sapegin/css-modules-with-typescript-and-webpack-6b221ebe5f10
 require("./index.css");
 
 // Set up canvas
