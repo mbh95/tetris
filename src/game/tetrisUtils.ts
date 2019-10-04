@@ -20,7 +20,7 @@ export function getGhostPiece(piece: Piece, matrix: Matrix): Piece {
     let candidate = piece.translated(DIR_DOWN);
     while (matrix.isPieceValid(candidate)) {
         curGhost = candidate;
-        candidate = piece.translated(DIR_DOWN);
+        candidate = curGhost.translated(DIR_DOWN);
     }
     return curGhost;
 }

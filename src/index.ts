@@ -6,6 +6,8 @@ require("./index.css");
 const mainCanvas: HTMLCanvasElement = document.createElement("canvas");
 mainCanvas.width = 800;
 mainCanvas.height = 600;
+const mainCanvasCtx: CanvasRenderingContext2D = mainCanvas.getContext("2d")!;
+
 document.getElementById("root")!.append(mainCanvas);
 
 // Set up first screen
@@ -19,6 +21,7 @@ function update(): void {
     const now: number = performance.now();
     const dt = (now - prev) / 1000.0;
     practiceScreen.update(dt);
+    mainCanvasCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
     practiceScreen.render(mainCanvas);
     prev = now;
     console.log(1.0 / (dt == 0 ? 0.0000001 : dt));

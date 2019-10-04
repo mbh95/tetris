@@ -81,7 +81,6 @@ export class KeyboardInputSource {
         if (e.repeat || !this.keyToActionsMap.has(e.code)) {
             return;
         }
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         for (const action of this.keyToActionsMap.get(e.code)!) {
             this.dispatcher.dispatch({type: action, keyDown: true});
         }
@@ -91,7 +90,6 @@ export class KeyboardInputSource {
         if (e.repeat || !this.keyToActionsMap.has(e.code)) {
             return;
         }
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         for (const action of this.keyToActionsMap.get(e.code)!) {
             this.dispatcher.dispatch({type: action, keyDown: false});
         }

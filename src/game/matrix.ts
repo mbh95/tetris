@@ -86,7 +86,7 @@ export class Matrix {
         const affectedRows: Set<number> = piece.getMatrixBlocks().map(matrixBlock => matrixBlock.matrixPos.row).toSet();
         const clearedRows: Set<number> = affectedRows
             .filter(row =>
-                !Range(0, this.numCols)
+                Range(0, this.numCols)
                     .map(col => new Position({row, col}))
                     .filter(pos => blocksWithPiece.get(pos) === undefined)
                     .isEmpty());
@@ -97,7 +97,7 @@ export class Matrix {
         }
 
         // Remove cleared rows and shift blocks down to their new positions
-        const newBlocks: Map<Position, Block> = this.blocks
+        const newBlocks: Map<Position, Block> = blocksWithPiece
             .filter((block: Block, pos: Position) => !clearedRows.contains(pos.row)) // Remove cleared blocks
             .mapKeys(pos => new Position({
                 row: pos.row - clearedRows.filter(clearedRow => clearedRow < pos.row).size, // Shift down by how many cleared blocks are below
