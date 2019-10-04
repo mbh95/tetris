@@ -1,0 +1,10 @@
+canvas {
+    display: block;
+    margin: 2px;
+    border: 2px solid red;
+    image-rendering: optimizeSpeed; /* Older versions of FF          */
+    image-rendering: -moz-crisp-edges; /* FF 6.0+                       */
+    image-rendering: -o-crisp-edges; /* OS X & Windows Opera (12.02+) */
+    image-rendering: pixelated; /* Awesome future-browsers       */
+    -ms-interpolation-mode: nearest-neighbor; /* IE                            */
+}

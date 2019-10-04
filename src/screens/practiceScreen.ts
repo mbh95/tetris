@@ -13,6 +13,8 @@ export interface Screen {
     exit(): void;
 
     update(dt: number): void;
+
+    render(canvas: HTMLCanvasElement): void;
 }
 
 export class PracticeScreen implements Screen {
@@ -47,4 +49,7 @@ export class PracticeScreen implements Screen {
         this.game = this.game.update(dt);
     }
 
+    render(canvas: HTMLCanvasElement): void {
+        
+    }
 }
