@@ -15,6 +15,6 @@ export class LCG {
     }
 }
 
-export function toRange(n: bigint, range: number): number {
-    return Number(n % BigInt(range));
+export function toRange(n: bigint, low: number, high: number): number {
+    return low + Number(n % BigInt(high - low));
 }
