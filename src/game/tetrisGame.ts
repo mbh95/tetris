@@ -47,16 +47,17 @@ class FallingPieceState implements TetrisGame {
             const queueNext = queue.next();
             this.fallingPiece = new Piece(queueNext.pieceProto, 0, matrix.spawnPos);
             this.queue = queueNext.generator;
+            this.canHold = true;
         } else {
             this.fallingPiece = fallingPiece;
             this.queue = queue;
+            this.canHold = canHold;
         }
         this.gravityRate = gravityRate;
         this.lockDelay = lockDelay;
 
         this.gravityAccumulator = gravityAccumulator;
         this.lockCountdown = lockCountdown;
-        this.canHold = canHold;
     }
 
     handleActionEvent(e: TetrisActionEvent): TetrisGame {
@@ -70,7 +71,7 @@ class FallingPieceState implements TetrisGame {
             case TetrisActionEventType.HOLD:
                 return this.hold();
             case TetrisActionEventType.HARD_DROP:
-                return this.hardDrop().lockPiece().spawnNextPiece();
+                return this.hardDrop().lockPiece();
             case TetrisActionEventType.ROTATE_CW:
                 return this.rotateCw();
             case TetrisActionEventType.ROTATE_CCW:
@@ -115,13 +116,6 @@ class FallingPieceState implements TetrisGame {
             return new FallingPieceState(lockResult.newMatrix, undefined, this.heldPiece, this.queue, this.gravityRate, this.lockDelay, this.gravityAccumulator, this.lockCountdown, this.canHold);
         }
         return this;
-    }
-
-    private spawnNextPiece(): FallingPieceState {
-        const queueNext = this.queue.next();
-        const newQueue = queueNext.generator;
-        const newPiece: Piece = new Piece(queueNext.pieceProto, 0, this.matrix.spawnPos);
-        return new FallingPieceState(this.matrix, newPiece, this.heldPiece, newQueue, this.gravityRate, this.lockDelay, this.gravityAccumulator, this.lockCountdown, true);
     }
 
     private hold(): FallingPieceState {
