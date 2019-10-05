@@ -40,7 +40,7 @@ export class BagPieceGenerator implements PieceGenerator {
 
     static newBagPieceGenerator(bag: List<PiecePrototype>, seed?: bigint): BagPieceGenerator {
         if (seed === undefined) {
-            seed = BigInt(Math.round(performance.now()));
+            seed = BigInt(Math.round(Date.now()));
         }
         return new BagPieceGenerator(bag, bag, new LCG(seed));
     }
