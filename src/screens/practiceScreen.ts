@@ -69,16 +69,16 @@ export class PracticeScreen implements Screen {
         const matrixCtx = this.matrixCanvas.getContext("2d")!;
         matrixCtx.clearRect(0, 0, this.matrixCanvas.width, this.matrixCanvas.height);
         matrixCtx.fillStyle = "red";
-        this.game.matrix.getBlocks().forEach(block => {
+        this.game.sim.matrix.getBlocks().forEach(block => {
             this.renderBlock(matrixCtx, block.matrixPos.row, block.matrixPos.col);
         });
-        if (this.game.fallingPiece !== undefined) {
+        if (this.game.sim.fallingPiece !== undefined) {
             matrixCtx.fillStyle = "green";
-            this.game.fallingPiece.getMatrixBlocks().forEach(block => {
+            this.game.sim.fallingPiece.getMatrixBlocks().forEach(block => {
                 this.renderBlock(matrixCtx, block.matrixPos.row, block.matrixPos.col);
             });
             matrixCtx.fillStyle = "yellow";
-            getGhostPiece(this.game.fallingPiece, this.game.matrix).getMatrixBlocks().forEach(block => {
+            getGhostPiece(this.game.sim.fallingPiece, this.game.sim.matrix).getMatrixBlocks().forEach(block => {
                 this.renderBlock(matrixCtx, block.matrixPos.row, block.matrixPos.col);
             })
         }
