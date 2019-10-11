@@ -68,7 +68,7 @@ export class Matrix {
      * Lock the given piece into this Matrix removing any full rows that result.
      *
      * @param piece - The Piece to lock into this Matrix.
-     * @retuns A LockPieceResult where the newMatrix is a new Matrix resulting from locking on success and this Matrix on failure.
+     * @returns A LockPieceResult where the newMatrix is a new Matrix resulting from locking on success and this Matrix on failure.
      */
     lockPiece(piece: Piece): LockPieceResult {
         // If the piece doesn't fit in the matrix then return a no-op lock result.

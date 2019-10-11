@@ -86,7 +86,7 @@ export const SRS_Z: PiecePrototype = new PiecePrototype(
     PieceUtils.ccwTransitionsFromKickTable(J_L_S_T_Z_KICK_OFFSET_TABLE)
 );
 
-export const ALL_SRS_TEROMINOES: List<PiecePrototype> = List([SRS_I, SRS_J, SRS_L, SRS_O, SRS_S, SRS_T, SRS_Z]);
+export const ALL_SRS_TETROMINOES: List<PiecePrototype> = List([SRS_I, SRS_J, SRS_L, SRS_O, SRS_S, SRS_T, SRS_Z]);
 
 export const NES_I: PiecePrototype = new PiecePrototype(
     PieceUtils.orientationsFromBlocks(I_BLOCK_TABLE, BLOCK_I),
@@ -125,4 +125,4 @@ export const NES_Z: PiecePrototype = new PiecePrototype(
     PieceUtils.ccwTransitionsFromKickTable(DEFAULT_KICK_OFFSET_TABLE)
 );
 
-export const ALL_NES_TEROMINOES: List<PiecePrototype> = List([NES_I, NES_J, NES_L, NES_O, NES_S, NES_T, NES_Z]);
+export const ALL_NES_TETROMINOES: List<PiecePrototype> = List([NES_I, NES_J, NES_L, NES_O, NES_S, NES_T, NES_Z]);

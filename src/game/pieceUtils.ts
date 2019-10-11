@@ -55,7 +55,7 @@ export function transitionsFromKickTable(kickTable: KickTable, nextStateFn: (cur
         const minKtLen = Math.min(ktStateCur.length, ktStateNext.length);
 
         if (ktStateCur.length != ktStateNext.length) {
-            console.warn(`Kicktable row lengths mismatched. Using ${minKtLen} = min(${ktStateCur.length}, ${ktStateNext.length})`)
+            console.warn(`Kick-table row lengths mismatched. Using ${minKtLen} = min(${ktStateCur.length}, ${ktStateNext.length})`)
         }
 
         const stateTransitions: Transition[] = [];
