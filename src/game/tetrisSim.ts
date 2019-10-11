@@ -45,7 +45,7 @@ export class TetrisSim {
         return this;
     }
 
-    setQueue(newQueue: PieceGenerator) {
+    setQueue(newQueue: PieceGenerator): TetrisSim {
         if (newQueue !== this.queue) {
             return new TetrisSim(this.matrix, this.fallingPiece, this.heldPiece, newQueue);
         }
@@ -74,7 +74,7 @@ export class TetrisSim {
         return this.setPiece(new Piece(pieceProto, 0, this.matrix.spawnPos));
     }
 
-    spawnNextPiece(): TetrisSim {
+    spawnNext(): TetrisSim {
         const queueNext = this.queue.next();
         return this
             .spawnPiece(queueNext.pieceProto)
@@ -82,22 +82,20 @@ export class TetrisSim {
     }
 
     lockPiece(): TetrisSim {
-        if (this.matrix.isPieceValid(this.fallingPiece)) {
-            const lockResult = this.matrix.lockPiece(this.fallingPiece);
-            return this
-                .setMatrix(lockResult.newMatrix)
-                .spawnNextPiece();
-
-        }
-        return this;
+        const lockResult = this.matrix.lockPiece(this.fallingPiece);
+        return this.setMatrix(lockResult.newMatrix);
     }
 
-    swapToHold(): TetrisSim {
+    lockPieceAndSpawnNext(): TetrisSim {
+        return this.lockPiece().spawnNext();
+    }
+
+    swap(): TetrisSim {
         const newHeldPiece: PiecePrototype = this.fallingPiece.piecePrototype;
         if (this.heldPiece === undefined) {
             return this
                 .setHeldPiece(newHeldPiece)
-                .spawnNextPiece();
+                .spawnNext();
         } else {
             return this
                 .setHeldPiece(newHeldPiece)
