@@ -20,10 +20,8 @@ test("Test bag generator", ()=>{
     let hist: string[] = [];
     for (let i = 0; i < 1000; i++) {
         for (let j = 0; j < 7; j++) {
-            const n = q.next();
-            q = n.generator;
-            const p = n.pieceProto;
-            hist.push(descriptionMap.get(p)!);
+            hist.push(descriptionMap.get(q.head())!);
+            q = q.tail();
         }
         const unused = Set(descriptionMap.values()).filter(v => hist.indexOf(v) < 0);
         expect(unused.size).toBe(0);

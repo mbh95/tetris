@@ -1,10 +1,9 @@
 import {List} from "immutable";
-import {LCG, toRange} from "./lcg";
+import {FuncList} from "../util/funcList";
+import {bigintToRange, LCG} from "./lcg";
 import {PiecePrototype} from "./piece";
 
-export interface PieceGenerator {
-    next(): { generator: PieceGenerator; pieceProto: PiecePrototype };
-}
+export type PieceGenerator = FuncList<PiecePrototype>;
 
 export class RandomPieceGenerator implements PieceGenerator {
     readonly pieces: List<PiecePrototype>;
@@ -15,12 +14,12 @@ export class RandomPieceGenerator implements PieceGenerator {
         this.lcg = lcg;
     }
 
-    next(): { generator: PieceGenerator; pieceProto: PiecePrototype } {
-        const lcgNextResult = this.lcg.next();
-        return {
-            generator: new RandomPieceGenerator(this.pieces, lcgNextResult.nextLCG),
-            pieceProto: this.pieces.get(toRange(lcgNextResult.nextSeed, 0, this.pieces.size))!
-        };
+    head(): PiecePrototype {
+        return this.pieces.get(bigintToRange(this.lcg.head(), 0, this.pieces.size))!;
+    }
+
+    tail(): PieceGenerator {
+        return new RandomPieceGenerator(this.pieces, this.lcg.tail());
     }
 }
 
@@ -38,25 +37,27 @@ export class BagPieceGenerator implements PieceGenerator {
         this.lcg = lcg;
     }
 
+    private headIndex(): number {
+        return bigintToRange(this.lcg.head(), 0, this.remaining.size);
+    }
+
+    head(): PiecePrototype {
+        return this.remaining.get(this.headIndex())!;
+    }
+
+    tail(): PieceGenerator {
+        if (this.remaining.size == 1) {
+            return new BagPieceGenerator(this.bag, this.bag, this.lcg.tail());
+        } else {
+            return new BagPieceGenerator(this.bag, this.remaining.remove(this.headIndex()), this.lcg.tail());
+        }
+    }
+
     static newBagPieceGenerator(bag: List<PiecePrototype>, seed?: bigint): BagPieceGenerator {
         if (seed === undefined) {
             seed = BigInt(Math.round(Date.now()));
         }
-        return new BagPieceGenerator(bag, bag, new LCG(seed));
-    }
-
-    next(): { generator: PieceGenerator; pieceProto: PiecePrototype } {
-        if (this.remaining.size == 1) {
-            return {
-                generator: new BagPieceGenerator(this.bag, this.bag, this.lcg),
-                pieceProto: this.remaining.get(0)!
-            };
-        }
-        const lcgNextResult = this.lcg.next();
-        const nextIndex = toRange(lcgNextResult.nextSeed, 0, this.remaining.size);
-        return {
-            generator: new BagPieceGenerator(this.bag, this.remaining.remove(nextIndex), lcgNextResult.nextLCG),
-            pieceProto: this.remaining.get(nextIndex)!
-        };
+        // Throw away the first value since it was given to us.
+        return new BagPieceGenerator(bag, bag, new LCG(seed).tail());
     }
 }

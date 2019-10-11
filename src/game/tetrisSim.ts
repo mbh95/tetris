@@ -75,10 +75,9 @@ export class TetrisSim {
     }
 
     spawnNext(): TetrisSim {
-        const queueNext = this.queue.next();
         return this
-            .spawnPiece(queueNext.pieceProto)
-            .setQueue(queueNext.generator);
+            .spawnPiece(this.queue.head())
+            .setQueue(this.queue.tail());
     }
 
     lockPiece(): TetrisSim {
@@ -104,7 +103,6 @@ export class TetrisSim {
     }
 
     static newTetrisSim(matrix: Matrix, queue: PieceGenerator): TetrisSim {
-        const queueNext = queue.next();
-        return new TetrisSim(matrix, new Piece(queueNext.pieceProto, 0, matrix.spawnPos), undefined, queueNext.generator);
+        return new TetrisSim(matrix, new Piece(queue.head(), 0, matrix.spawnPos), undefined, queue.tail());
     }
 }
