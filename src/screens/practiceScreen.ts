@@ -4,7 +4,7 @@ import {Matrix} from "../game/matrix";
 import {BagPieceGenerator} from "../game/pieceGenerator";
 import {newTetrisGame, TetrisGame} from "../game/tetrisGame";
 import {getGhostPiece} from "../game/tetrisUtils";
-import {ALL_SRS_TEROMINOES} from "../game/tetromino";
+import {ALL_SRS_TETROMINOES} from "../game/tetromino";
 import {KeyboardInputSource} from "../input/keyboardInputSource";
 import {VirtualGamepad} from "../input/virtualGamepad";
 
@@ -28,7 +28,7 @@ export class PracticeScreen implements Screen {
     private readonly BLOCK_SIZE = 10;
 
     constructor() {
-        this.game = newTetrisGame(new Matrix(40, 10), BagPieceGenerator.newBagPieceGenerator(List(ALL_SRS_TEROMINOES)), 1.0, 3.0);
+        this.game = newTetrisGame(new Matrix(40, 10), BagPieceGenerator.newBagPieceGenerator(List(ALL_SRS_TETROMINOES)), 1.0, 3.0);
         this.virtualGamepad = new VirtualGamepad(0.2, 60);
         this.keyboard = new KeyboardInputSource();
         this.keyboard.registerInputHandler(this.virtualGamepad.inputHandler);
