@@ -1,6 +1,6 @@
-import {Block} from "./block";
-import {PiecePrototype} from "./piece";
-import * as PieceUtils from "./pieceUtils";
+import {Block} from "../obj/block";
+import {PiecePrototype} from "../obj/piece/piecePrototype";
+import * as PieceUtils from "../util/pieceUtils";
 import {List} from "immutable";
 import BlockTable = PieceUtils.BlockTable;
 import KickTable = PieceUtils.KickTable;

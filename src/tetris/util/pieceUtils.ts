@@ -1,12 +1,13 @@
 import {List, Map, Range} from "immutable";
-import {Block} from "./block";
-import {Orientation, Transition} from "./piece";
-import {Position} from "./position";
+import {Block} from "../obj/block";
+import {Orientation} from "../obj/piece/orientation";
+import {Transition} from "../obj/piece/transition";
+import {Position} from "../obj/position";
 
 export type BlockTable = [number, number][];
 
 /// Indices for offset tables are [STATE][ATTEMPT #][ROW (0) / COL (1)]
-/// Rotating from state A to state B calculate the offset sequence by taking
+/// Rotating from obj A to obj B calculate the offset sequence by taking
 /// (offset row, offset col) := (table[A][n][0] - table[B][n][0], table[A][n][1] - table[B][n][1])
 /// where each n is attempted in order 0 ... N
 export type KickTable = [number, number][][];

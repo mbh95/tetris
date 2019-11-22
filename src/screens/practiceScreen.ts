@@ -1,12 +1,14 @@
 import {List} from "immutable";
 import {TetrisActionEvent} from "../events/actionEvent";
-import {Matrix} from "../game/matrix";
-import {BagPieceGenerator} from "../game/pieceGenerator";
-import {newTetrisGame, TetrisGame} from "../game/tetrisGame";
-import {getGhostPiece} from "../game/tetrisUtils";
-import {ALL_SRS_TETROMINOES} from "../game/tetromino";
+import {Matrix} from "../tetris/obj/matrix/matrix";
+import {newTetrisGame, TetrisGame} from "../tetris/game/tetrisGame";
+import {PiecePrototype} from "../tetris/obj/piece/piecePrototype";
+import {getGhostPiece} from "../tetris/util/tetrisUtils";
+import {ALL_SRS_TETROMINOES} from "../tetris/data/tetromino";
 import {KeyboardInputSource} from "../input/keyboardInputSource";
 import {VirtualGamepad} from "../input/virtualGamepad";
+import {BagGenerator} from "../util/generator";
+import {Random} from "../util/random";
 
 export interface Screen {
     init(): void;
@@ -28,7 +30,8 @@ export class PracticeScreen implements Screen {
     private readonly BLOCK_SIZE = 10;
 
     constructor() {
-        this.game = newTetrisGame(new Matrix(40, 10), BagPieceGenerator.newBagPieceGenerator(List(ALL_SRS_TETROMINOES)), 1.0, 3.0);
+        const pieceGenerator = BagGenerator.newBagGenerator<PiecePrototype>(List(ALL_SRS_TETROMINOES), new Random(BigInt(Date.now())));
+        this.game = newTetrisGame(new Matrix(40, 10), pieceGenerator, 1.0, 3.0);
         this.virtualGamepad = new VirtualGamepad(0.2, 60);
         this.keyboard = new KeyboardInputSource();
         this.keyboard.registerInputHandler(this.virtualGamepad.inputHandler);

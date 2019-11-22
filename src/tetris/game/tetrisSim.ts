@@ -1,16 +1,17 @@
-import {Matrix} from "./matrix";
-import {Piece, PiecePrototype} from "./piece";
-import {PieceGenerator} from "./pieceGenerator";
-import {Position} from "./position";
-import {getGhostPiece} from "./tetrisUtils";
+import {Matrix} from "../obj/matrix/matrix";
+import {Piece} from "../obj/piece/piece";
+import {Generator} from "../../util/generator";
+import {PiecePrototype} from "../obj/piece/piecePrototype";
+import {Position} from "../obj/position";
+import {getGhostPiece} from "../util/tetrisUtils";
 
 export class TetrisSim {
     readonly matrix: Matrix;
     readonly fallingPiece: Piece;
     readonly heldPiece: PiecePrototype | undefined;
-    readonly queue: PieceGenerator;
+    readonly queue: Generator<PiecePrototype>;
 
-    constructor(matrix: Matrix, fallingPiece: Piece, heldPiece: PiecePrototype | undefined, queue: PieceGenerator) {
+    constructor(matrix: Matrix, fallingPiece: Piece, heldPiece: PiecePrototype | undefined, queue: Generator<PiecePrototype>) {
         this.matrix = matrix;
         this.fallingPiece = fallingPiece;
         this.heldPiece = heldPiece;
@@ -45,7 +46,7 @@ export class TetrisSim {
         return this;
     }
 
-    setQueue(newQueue: PieceGenerator): TetrisSim {
+    setQueue(newQueue: Generator<PiecePrototype>): TetrisSim {
         if (newQueue !== this.queue) {
             return new TetrisSim(this.matrix, this.fallingPiece, this.heldPiece, newQueue);
         }
@@ -76,8 +77,8 @@ export class TetrisSim {
 
     spawnNext(): TetrisSim {
         return this
-            .spawnPiece(this.queue.head())
-            .setQueue(this.queue.tail());
+            .spawnPiece(this.queue.get())
+            .setQueue(this.queue.next());
     }
 
     lockPiece(): TetrisSim {
@@ -102,7 +103,7 @@ export class TetrisSim {
         }
     }
 
-    static newTetrisSim(matrix: Matrix, queue: PieceGenerator): TetrisSim {
-        return new TetrisSim(matrix, new Piece(queue.head(), 0, matrix.spawnPos), undefined, queue.tail());
+    static newTetrisSim(matrix: Matrix, queue: Generator<PiecePrototype>): TetrisSim {
+        return new TetrisSim(matrix, new Piece(queue.get(), 0, matrix.spawnPos), undefined, queue.next());
     }
 }

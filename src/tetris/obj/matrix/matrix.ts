@@ -1,18 +1,10 @@
-import {Block, MatrixBlock} from "./block";
-import {Position} from "./position";
-import {Piece} from "./piece";
+import {Block} from "../block";
+import {Position} from "../position";
+import {Piece} from "../piece/piece";
 import {Map, Range, Seq, Set} from "immutable";
+import {LockPieceResult} from "./lockPieceResult";
+import {MatrixBlock} from "./matrixBlock";
 import Indexed = Seq.Indexed;
-
-export class LockPieceResult {
-    readonly newMatrix: Matrix;
-    readonly clearedRows: Set<number>;
-
-    constructor(newMatrix: Matrix, clearedRows: Set<number>) {
-        this.newMatrix = newMatrix;
-        this.clearedRows = clearedRows;
-    }
-}
 
 export class Matrix {
     readonly numRows: number;

@@ -1,6 +1,6 @@
-import {Piece} from "./piece";
-import {Matrix} from "./matrix";
-import {Position} from "./position";
+import {Piece} from "../obj/piece/piece";
+import {Matrix} from "../obj/matrix/matrix";
+import {Position} from "../obj/position";
 import {List} from "immutable";
 
 export const DIR_UP = new Position({row: 1, col: 0});
@@ -14,7 +14,6 @@ export function isPieceOnGround(piece: Piece, matrix: Matrix): boolean {
     return matrix.isPieceValid(piece) && !matrix.isPieceValid(piece.translated(new Position({row: -1, col: 0})));
 }
 
-// TODO: Binary search for ghost piece?
 export function getGhostPiece(piece: Piece, matrix: Matrix): Piece {
     let curGhost = piece;
     let candidate = piece.translated(DIR_DOWN);
