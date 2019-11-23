@@ -1,7 +1,6 @@
 import {PracticeScreen} from "./screens/practiceScreen";
 import "./index.css";
 
-console.log("Hello Tetris");
 // Set up canvas
 const mainCanvas: HTMLCanvasElement = document.createElement("canvas");
 mainCanvas.width = 800;

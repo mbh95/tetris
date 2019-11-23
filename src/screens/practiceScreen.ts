@@ -2,6 +2,7 @@ import {List} from "immutable";
 import {TetrisActionEvent} from "../events/actionEvent";
 import {Matrix} from "../tetris/obj/matrix/matrix";
 import {newTetrisGame, TetrisGame} from "../tetris/game/tetrisGame";
+import {Piece} from "../tetris/obj/piece/piece";
 import {PiecePrototype} from "../tetris/obj/piece/piecePrototype";
 import {getGhostPiece} from "../tetris/util/tetrisUtils";
 import {ALL_SRS_TETROMINOES} from "../tetris/data/tetromino";
@@ -71,23 +72,26 @@ export class PracticeScreen implements Screen {
     render(canvas: HTMLCanvasElement): void {
         const matrixCtx = this.matrixCanvas.getContext("2d")!;
         matrixCtx.clearRect(0, 0, this.matrixCanvas.width, this.matrixCanvas.height);
+
+        const matrix: Matrix = this.game.sim.matrix;
+        const fallingPiece: Piece = this.game.sim.fallingPiece;
+
         matrixCtx.fillStyle = "red";
-        this.game.sim.matrix.getBlocks().forEach(block => {
+        matrix.getBlocks().forEach(block => {
             this.renderBlock(matrixCtx, block.matrixPos.row, block.matrixPos.col);
         });
-        if (this.game.sim.fallingPiece !== undefined) {
-            matrixCtx.fillStyle = "green";
-            this.game.sim.fallingPiece.getMatrixBlocks().forEach(block => {
-                this.renderBlock(matrixCtx, block.matrixPos.row, block.matrixPos.col);
-            });
-            matrixCtx.fillStyle = "yellow";
-            getGhostPiece(this.game.sim.fallingPiece, this.game.sim.matrix).getMatrixBlocks().forEach(block => {
-                this.renderBlock(matrixCtx, block.matrixPos.row, block.matrixPos.col);
-            })
-        }
+
+        matrixCtx.fillStyle = "yellow";
+        getGhostPiece(fallingPiece, matrix).getMatrixBlocks().forEach(block => {
+            this.renderBlock(matrixCtx, block.matrixPos.row, block.matrixPos.col);
+        });
+
+        matrixCtx.fillStyle = "green";
+        fallingPiece.getMatrixBlocks().forEach(block => {
+            this.renderBlock(matrixCtx, block.matrixPos.row, block.matrixPos.col);
+        });
+
         const ctx = canvas.getContext("2d")!;
         ctx.drawImage(this.matrixCanvas, 0, 0);
     }
-
-
 }
