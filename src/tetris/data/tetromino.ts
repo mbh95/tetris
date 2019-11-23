@@ -41,13 +41,13 @@ const DEFAULT_KICK_OFFSET_TABLE: KickTable = [
     [[0, 0]], // LEFT
 ];
 
-const BLOCK_I = new Block(1);
-const BLOCK_J = new Block(2);
-const BLOCK_L = new Block(3);
-const BLOCK_O = new Block(4);
-const BLOCK_S = new Block(5);
-const BLOCK_T = new Block(6);
-const BLOCK_Z = new Block(7);
+const BLOCK_I = new Block({colorId: 1});
+const BLOCK_J = new Block({colorId: 2});
+const BLOCK_L = new Block({colorId: 3});
+const BLOCK_O = new Block({colorId: 4});
+const BLOCK_S = new Block({colorId: 5});
+const BLOCK_T = new Block({colorId: 6});
+const BLOCK_Z = new Block({colorId: 7});
 
 export const SRS_I: PiecePrototype = new PiecePrototype(
     PieceUtils.orientationsFromBlocks(I_BLOCK_TABLE, BLOCK_I),

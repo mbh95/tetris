@@ -1,28 +1,31 @@
 import {Block} from "../block";
 import {Position} from "../position";
 import {Piece} from "../piece/piece";
-import {Map, Range, Seq, Set} from "immutable";
-import {LockPieceResult} from "./lockPieceResult";
+import {Map, Range, Record, Seq, Set} from "immutable";
+import {MatrixLockPieceResult} from "./matrixLockPieceResult";
 import {MatrixBlock} from "./matrixBlock";
 import Indexed = Seq.Indexed;
 
-export class Matrix {
-    readonly numRows: number;
-    readonly numCols: number;
-    readonly blocks: Map<Position, Block>;
-    readonly spawnPos: Position;
+interface MatrixParams {
+    numRows?: number;
+    numCols?: number;
+    blocks?: Map<Position, Block>;
+    spawnPos?: Position;
+}
 
-    constructor(numRows: number, numCols: number, blocks?: Map<Position, Block>, spawnPos?: Position) {
-        this.numRows = numRows;
-        this.numCols = numCols;
+export class Matrix extends Record({
+    numRows: 40,
+    numCols: 10,
+    blocks: Map(),
+    spawnPos: new Position({row: 19, col: 4}),
+}) {
+    readonly numRows!: number;
+    readonly numCols!: number;
+    readonly blocks!: Map<Position, Block>;
+    readonly spawnPos!: Position;
 
-        this.blocks = blocks ? blocks : Map();
-
-        this.spawnPos = spawnPos ? spawnPos : new Position({row: (numRows / 2) - 1, col: (numCols / 2) - 1});
-    }
-
-    withNewBlocks(blocks: Map<Position, Block>): Matrix {
-        return new Matrix(this.numRows, this.numCols, blocks, this.spawnPos);
+    constructor(params?: MatrixParams) {
+        params? super(params) : super();
     }
 
     isPositionValidRC(r: number, c: number): boolean {
@@ -60,12 +63,12 @@ export class Matrix {
      * Lock the given piece into this Matrix removing any full rows that result.
      *
      * @param piece - The Piece to lock into this Matrix.
-     * @returns A LockPieceResult where the newMatrix is a new Matrix resulting from locking on success and this Matrix on failure.
+     * @returns A MatrixLockPieceResult where the newMatrix is a new Matrix resulting from locking on success and this Matrix on failure.
      */
-    lockPiece(piece: Piece): LockPieceResult {
+    lockPiece(piece: Piece): MatrixLockPieceResult {
         // If the piece doesn't fit in the matrix then return a no-op lock result.
         if (!this.isPieceValid(piece)) {
-            return new LockPieceResult(this, Set([]));
+            return new MatrixLockPieceResult(this, Set([]));
         }
 
         // Put the piece into the matrix.
@@ -85,7 +88,7 @@ export class Matrix {
 
         // If no rows were cleared just return the new Matrix
         if (clearedRows.isEmpty()) {
-            return new LockPieceResult(this.withNewBlocks(blocksWithPiece), Set([]));
+            return new MatrixLockPieceResult(this.merge({blocks: blocksWithPiece}), Set([]));
         }
 
         // Remove cleared rows and shift blocks down to their new positions
@@ -95,6 +98,6 @@ export class Matrix {
                 row: pos.row - clearedRows.filter(clearedRow => clearedRow < pos.row).size, // Shift down by how many cleared blocks are below
                 col: pos.col // Column stays the same
             }));
-        return new LockPieceResult(this.withNewBlocks(newBlocks), clearedRows);
+        return new MatrixLockPieceResult(this.merge({blocks: newBlocks}), clearedRows);
     }
 }

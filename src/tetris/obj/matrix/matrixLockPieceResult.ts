@@ -1,7 +1,7 @@
 import {Set} from "immutable";
 import {Matrix} from "./matrix";
 
-export class LockPieceResult {
+export class MatrixLockPieceResult {
     readonly newMatrix: Matrix;
     readonly clearedRows: Set<number>;
 

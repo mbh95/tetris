@@ -13,7 +13,7 @@ export class Position extends Record({
     readonly col!: number;
 
     constructor(params?: PositionParams) {
-        params ? super(params) : super();
+        params? super(params) : super();
     }
 
     translated(dPos: Position): Position {

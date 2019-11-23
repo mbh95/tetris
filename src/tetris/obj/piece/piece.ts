@@ -1,30 +1,28 @@
 import {MatrixBlock} from "../matrix/matrixBlock";
 import {Position} from "../position";
-import {Collection} from "immutable";
+import {Collection, List, Map, Record} from "immutable";
 import {PieceBlock} from "./pieceBlock";
 import {PiecePrototype} from "./piecePrototype";
 import {Transition} from "./transition";
 import Indexed = Collection.Indexed;
 
-export class Piece {
-    readonly piecePrototype: PiecePrototype;
-    readonly orientationId: number;
-    readonly position: Position;
+interface PieceParams {
+    piecePrototype?: PiecePrototype;
+    orientationId?: number;
+    position?: Position;
+}
 
-    constructor(piecePrototype: PiecePrototype, orientationId: number, position: Position) {
-        this.piecePrototype = piecePrototype;
-        this.orientationId = orientationId;
-        this.position = position;
-    }
+export class Piece extends Record({
+    piecePrototype: new PiecePrototype(List(), Map(), Map()),
+    orientationId: 0,
+    position: new Position()
+}) {
+    readonly piecePrototype!: PiecePrototype;
+    readonly orientationId!: number;
+    readonly position!: Position;
 
-    /**
-     * Translate this piece by the given position.
-     *
-     * @param dPos - Delta position to use for the translation.
-     * @returns A new Piece which is this piece translated by dPos. Note that even if dPos=(0,0) a new Piece will be returned.
-     */
-    translated(dPos: Position): Piece {
-        return new Piece(this.piecePrototype, this.orientationId, this.position.translated(dPos));
+    constructor(params?: PieceParams) {
+        params? super(params) : super();
     }
 
     /**
@@ -50,6 +48,18 @@ export class Piece {
     }
 
     /**
+     * Translate this piece by the given position.
+     *
+     * @param dPos - Delta position to use for the translation.
+     * @param isPieceValidPredicate - A predicate function on a Piece which returns true iff the piece is valid.
+     * @returns A new Piece which is this piece translated by dPos if valid or this piece if the translation wasn't valid.
+     */
+    maybeTranslated(dPos: Position, isPieceValidPredicate: (piece: Piece) => boolean): Piece {
+        const newPiece: Piece = this.merge({position: this.position.translated(dPos)});
+        return isPieceValidPredicate(newPiece) ? newPiece : this;
+    }
+
+    /**
      * Try to transition this piece to a new obj.
      *
      * Tries to apply each transition in sequence and returns the first valid resulting piece.
@@ -58,9 +68,12 @@ export class Piece {
      * @param isPieceValidPredicate - A predicate function on a Piece which returns true iff the piece is valid.
      * @returns A new Piece which is the first valid resulting piece of applying each transition to this Piece or this Piece if no transition produced a valid piece. Note even if the first successful transition is a no-op a new Piece will be returned.
      */
-    transitioned(transitions: Iterable<Transition>, isPieceValidPredicate: (piece: Piece) => boolean): Piece {
+    maybeTransitioned(transitions: Iterable<Transition>, isPieceValidPredicate: (piece: Piece) => boolean): Piece {
         for (const transition of transitions) {
-            const newPiece = new Piece(this.piecePrototype, transition.newOrientationId, this.position.translated(transition.offset));
+            const newPiece = this.merge({
+                orientationId: transition.newOrientationId,
+                position: this.position.translated(transition.offset)
+            });
             if (isPieceValidPredicate(newPiece)) {
                 return newPiece;
             }
@@ -74,8 +87,8 @@ export class Piece {
      * @param isPieceValidPredicate - A predicate function on a Piece which returns true iff the piece is valid.
      * @returns A new Piece which is the clockwise rotation of this piece or this Piece if rotation failed.
      */
-    rotatedCw(isPieceValidPredicate: (piece: Piece) => boolean): Piece {
-        return this.transitioned(this.piecePrototype.getCwTransitions(this.orientationId), isPieceValidPredicate);
+    maybeRotatedCw(isPieceValidPredicate: (piece: Piece) => boolean): Piece {
+        return this.maybeTransitioned(this.piecePrototype.getCwTransitions(this.orientationId), isPieceValidPredicate);
     }
 
     /**
@@ -84,7 +97,7 @@ export class Piece {
      * @param isPieceValidPredicate - A predicate function on a Piece which returns true iff the piece is valid.
      * @returns A new Piece which is the counter-clockwise rotation of this piece or this Piece if rotation failed.
      */
-    rotatedCcw(isPieceValidPredicate: (piece: Piece) => boolean): Piece {
-        return this.transitioned(this.piecePrototype.getCcwTransitions(this.orientationId), isPieceValidPredicate);
+    maybeRotatedCcw(isPieceValidPredicate: (piece: Piece) => boolean): Piece {
+        return this.maybeTransitioned(this.piecePrototype.getCcwTransitions(this.orientationId), isPieceValidPredicate);
     }
 }

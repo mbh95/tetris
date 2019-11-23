@@ -1,7 +1,15 @@
-export class Block {
-    readonly colorId: number;
+import {Record} from "immutable";
 
-    constructor(colorId: number) {
-        this.colorId = colorId;
+interface BlockParams {
+    colorId?: number;
+}
+
+export class Block extends Record({
+    colorId: 0
+}) {
+    readonly colorId!: number;
+
+    constructor(params?: BlockParams) {
+        params? super(params) : super();
     }
 }

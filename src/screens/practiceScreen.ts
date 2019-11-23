@@ -15,7 +15,7 @@ export interface Screen {
 
     exit(): void;
 
-    update(dt: number): void;
+    tick(dt: number): void;
 
     render(canvas: HTMLCanvasElement): void;
 }
@@ -31,7 +31,7 @@ export class PracticeScreen implements Screen {
 
     constructor() {
         const pieceGenerator = BagGenerator.newBagGenerator<PiecePrototype>(List(ALL_SRS_TETROMINOES), new Random(BigInt(Date.now())));
-        this.game = newTetrisGame(new Matrix(40, 10), pieceGenerator, 1.0, 3.0);
+        this.game = newTetrisGame(new Matrix({numRows: 40, numCols: 10}), pieceGenerator, 1.0, 3.0, 0.5);
         this.virtualGamepad = new VirtualGamepad(0.2, 60);
         this.keyboard = new KeyboardInputSource();
         this.keyboard.registerInputHandler(this.virtualGamepad.inputHandler);
@@ -52,13 +52,13 @@ export class PracticeScreen implements Screen {
         this.keyboard.tearDown();
     }
 
-    update(dt: number): void {
+    tick(dt: number): void {
         this.virtualGamepad.update(dt);
         const inputEventBufferSnapshot = this.inputEventBuffer.slice();
         for (const e of inputEventBufferSnapshot) {
             this.game = this.game.handleActionEvent(e);
         }
-        this.game = this.game.update(dt);
+        this.game = this.game.tick(dt);
         this.inputEventBuffer = [];
     }
 
