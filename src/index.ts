@@ -4,9 +4,15 @@ import Stats from "stats.js";
 
 // Set up canvas
 const mainCanvas: HTMLCanvasElement = document.createElement("canvas");
+mainCanvas.id = "mainCanvas";
 mainCanvas.width = 800;
 mainCanvas.height = 600;
 const mainCanvasCtx: CanvasRenderingContext2D = mainCanvas.getContext("2d")!;
+
+const prevMainCanvas = document.getElementById("mainCanvas");
+if (prevMainCanvas !== null) {
+    prevMainCanvas.remove();
+}
 
 document.getElementById("root")!.append(mainCanvas);
 
