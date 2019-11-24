@@ -64,13 +64,13 @@ export class PracticeScreen implements Screen {
     }
 
     render(canvas: HTMLCanvasElement): void {
-        const matrixCanvas: HTMLCanvasElement = this.matrixComponent.update(this.game.sim.matrix, this.game.sim.fallingPiece);
+        const matrixCanvas: CanvasImageSource = this.matrixComponent.update(this.game.sim.matrix, this.game.sim.fallingPiece);
 
         const ctx = canvas.getContext("2d")!;
-        const canvasX = canvas.width / 2 - matrixCanvas.width / 2;
+        const canvasX = canvas.width / 2 - this.matrixComponent.getWidth() / 2;
 
         ctx.drawImage(matrixCanvas, canvasX, 0);
-        ctx.strokeRect(canvasX, 0, matrixCanvas.width, matrixCanvas.height);
+        ctx.strokeRect(canvasX, 0, this.matrixComponent.getWidth(), this.matrixComponent.getHeight());
 
 
     }

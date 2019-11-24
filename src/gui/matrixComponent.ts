@@ -48,7 +48,7 @@ export class MatrixComponent {
         this.blockRenderer.drawBlock(this.ctx2d, matrixBlock.block, x, y, this.blockSize);
     }
 
-    update(matrix: Matrix, fallingPiece: Piece): HTMLCanvasElement {
+    update(matrix: Matrix, fallingPiece: Piece): CanvasImageSource {
         if (this.lastDrawnMatrix === matrix && this.lastDrawnFallingPiece === fallingPiece) {
             return this.canvas;
         }
