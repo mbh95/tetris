@@ -4,7 +4,7 @@ import {Piece} from "../tetris/obj/piece/piece";
 import {getGhostPiece} from "../tetris/util/tetrisUtils";
 import {BlockRenderer} from "./blockRenderer";
 
-export class MatrixComponent {
+export class MatrixView {
 
     readonly visibleRows: number;
     readonly visibleCols: number;

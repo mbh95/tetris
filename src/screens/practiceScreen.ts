@@ -1,8 +1,9 @@
 import {List} from "immutable";
 import {TetrisActionEvent} from "../events/actionEvent";
 import {SimpleBlockRenderer} from "../gui/blockRenderer";
-import {MatrixComponent} from "../gui/matrixComponent";
-import {PiecePreviewComponent} from "../gui/piecePreviewComponent";
+import {MatrixView} from "../gui/matrixView";
+import {PiecePrototypeView} from "../gui/piecePrototypeView";
+import {QueueView} from "../gui/queueView";
 import {Matrix} from "../tetris/obj/matrix/matrix";
 import {newTetrisGame, TetrisGame} from "../tetris/game/tetrisGame";
 import {PiecePrototype} from "../tetris/obj/piece/piecePrototype";
@@ -28,8 +29,10 @@ export class PracticeScreen implements Screen {
     private virtualGamepad: VirtualGamepad;
     private keyboard: KeyboardInputSource;
     private inputEventBuffer: TetrisActionEvent[];
-    private readonly matrixComponent: MatrixComponent;
-    private readonly previewComponent: PiecePreviewComponent;
+    private readonly matrixView: MatrixView;
+    private readonly queueView: QueueView;
+    private readonly holdView: PiecePrototypeView;
+
     constructor() {
         const pieceGenerator = BagGenerator.newBagGenerator<PiecePrototype>(List(ALL_SRS_TETROMINOES), new Random(BigInt(Date.now())));
         this.game = newTetrisGame(new Matrix({numRows: 40, numCols: 10}), pieceGenerator, 1.0, 3.0, 0.5);
@@ -39,13 +42,14 @@ export class PracticeScreen implements Screen {
         this.inputEventBuffer = [];
         this.virtualGamepad.registerActionHandler((e: TetrisActionEvent) => this.inputEventBuffer.push(e));
 
-        this.matrixComponent = new MatrixComponent(20.5, 10, 20, new SimpleBlockRenderer());
-        this.previewComponent = new PiecePreviewComponent(5, 4.5, 4.5, 10, new SimpleBlockRenderer());
+        this.matrixView = new MatrixView(20.5, 10, 20, new SimpleBlockRenderer());
+        this.queueView = new QueueView(5, 4.5, 4.5, 10, new SimpleBlockRenderer());
+        this.holdView = new PiecePrototypeView(4.5, 4.5, 10, new SimpleBlockRenderer());
     }
 
     init(): void {
         this.keyboard.init();
-        this.matrixComponent.update(this.game.sim.matrix, this.game.sim.fallingPiece);
+        this.matrixView.update(this.game.sim.matrix, this.game.sim.fallingPiece);
     }
 
     exit(): void {
@@ -66,20 +70,29 @@ export class PracticeScreen implements Screen {
         const ctx = canvas.getContext("2d")!;
 
         // Draw matrix:
-        this.matrixComponent.update(this.game.sim.matrix, this.game.sim.fallingPiece);
-        const matrixCanvas: CanvasImageSource = this.matrixComponent.getImageSource();
-        const matrixX = canvas.width / 2 - this.matrixComponent.getWidth() / 2;
+        this.matrixView.update(this.game.sim.matrix, this.game.sim.fallingPiece);
+        const matrixCanvas: CanvasImageSource = this.matrixView.getImageSource();
+        const matrixX = canvas.width / 2 - this.matrixView.getWidth() / 2;
         ctx.drawImage(matrixCanvas, matrixX, 0);
-        ctx.strokeRect(matrixX, 0, this.matrixComponent.getWidth(), this.matrixComponent.getHeight());
+        ctx.strokeRect(matrixX, 0, this.matrixView.getWidth(), this.matrixView.getHeight());
 
         // Draw piece previews:
-        this.previewComponent.update(this.game.sim.queue);
-        const previews: CanvasImageSource[] = this.previewComponent.getImageSources();
-        for (let i = 0; i < this.previewComponent.previewLen; i++) {
-            const previewX = matrixX + this.matrixComponent.getWidth() + 5;
-            const previewY = i * (this.previewComponent.getHeight() + 5);
-            ctx.drawImage(previews[i], previewX, previewY);
-            ctx.strokeRect(previewX, previewY, this.previewComponent.getWidth(), this.previewComponent.getHeight());
+        this.queueView.update(this.game.sim.queue);
+        const previews: PiecePrototypeView[] = this.queueView.getPieceViews();
+        for (let i = 0; i < this.queueView.previewLen; i++) {
+            const pieceView: PiecePrototypeView = previews[i];
+            const previewX = matrixX + this.matrixView.getWidth() + 5;
+            const previewY = i * (pieceView.getHeight() + 5);
+            ctx.drawImage(pieceView.getImageSource(), previewX, previewY);
+            ctx.strokeRect(previewX, previewY, pieceView.getWidth(), pieceView.getHeight());
         }
+
+        // Draw hold piece:
+        this.holdView.update(this.game.sim.heldPiece);
+        const holdCanvas = this.holdView.getImageSource();
+        const holdX = matrixX - 5 - this.holdView.getWidth();
+        ctx.drawImage(holdCanvas, holdX, 0);
+        ctx.strokeRect(holdX, 0, this.holdView.getWidth(), this.holdView.getHeight());
+
     }
 }
