@@ -1,6 +1,6 @@
 
 import {List, Map, Set} from "immutable";
-import {PiecePrototype} from "../../src/tetris/obj/piece/piecePrototype";
+import {PiecePrototype} from "../../src/tetris/state/piece/piecePrototype";
 import {BagGenerator, Generator} from "../../src/util/generator";
 import {ALL_SRS_TETROMINOES, SRS_I, SRS_J, SRS_L, SRS_O, SRS_S, SRS_T, SRS_Z} from "../../src/tetris/data/tetromino";
 import {Random} from "../../src/util/random";

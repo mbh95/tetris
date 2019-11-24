@@ -1,6 +1,6 @@
 import {List} from "immutable";
-import {Block} from "../obj/block";
-import {PiecePrototype} from "../obj/piece/piecePrototype";
+import {Block} from "../state/block";
+import {PiecePrototype} from "../state/piece/piecePrototype";
 import * as PieceUtils from "../util/pieceUtils";
 import {BlockColor} from "./blockColor";
 import BlockTable = PieceUtils.BlockTable;

@@ -1,6 +1,6 @@
-import {Matrix} from "../tetris/obj/matrix/matrix";
-import {MatrixBlock} from "../tetris/obj/matrix/matrixBlock";
-import {Piece} from "../tetris/obj/piece/piece";
+import {Matrix} from "../tetris/state/matrix/matrix";
+import {MatrixBlock} from "../tetris/state/matrix/matrixBlock";
+import {Piece} from "../tetris/state/piece/piece";
 import {getGhostPiece} from "../tetris/util/tetrisUtils";
 import {BlockRenderer} from "./blockRenderer";
 

@@ -1,4 +1,4 @@
-import {Position} from "../../src/tetris/obj/position";
+import {Position} from "../../src/tetris/state/position";
 
 test("Merge works as expected", ()=>{
     const p1: Position = new Position({row: 1, col: 10});

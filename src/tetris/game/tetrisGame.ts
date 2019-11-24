@@ -1,22 +1,43 @@
 import {TetrisActionEvent} from "../../events/actionEvent";
-import {Matrix} from "../obj/matrix/matrix";
-import {Generator} from "../../util/generator";
-import {PiecePrototype} from "../obj/piece/piecePrototype";
-import {FallingPieceState} from "./states/fallingPieceState";
-import {TetrisProps} from "./tetrisProps";
-import {TetrisSim} from "../obj/sim/tetrisSim";
+import {TetrisStateTransitionEvent} from "../../events/transitionEvent";
+import {Dispatcher} from "../../util/dispatcher";
+import {TetrisGameState} from "../state/tetrisGameState";
 
-export interface TetrisGame {
-    readonly sim: TetrisSim;
-    readonly props: TetrisProps;
+export class TetrisGame {
+    private curGameState: TetrisGameState;
 
-    handleActionEvent(e: TetrisActionEvent): TetrisGame;
+    private readonly transitionDispatcher: Dispatcher<TetrisStateTransitionEvent>;
 
-    tick(dt: number): TetrisGame;
-}
+    constructor(initialGameState: TetrisGameState) {
+        this.curGameState = initialGameState;
+        this.transitionDispatcher = new Dispatcher<TetrisStateTransitionEvent>();
+    }
 
-export function newTetrisGame(matrix: Matrix, queue: Generator<PiecePrototype>, gravityRate: number, lockDelay: number, clearDelay: number): TetrisGame {
-    const newSim = TetrisSim.newTetrisSim(matrix, queue);
-    const newProps = new TetrisProps(gravityRate, lockDelay, clearDelay);
-    return new FallingPieceState({sim: newSim, props: newProps});
+    getState(): TetrisGameState {
+        return this.curGameState;
+    }
+
+    tick(dt: number): void {
+        const nextGameState: TetrisGameState = this.curGameState.tick(dt);
+        this.dispatchTransitionData(this.curGameState, nextGameState);
+        this.curGameState = nextGameState.clearTransitionData();
+    }
+
+    handleActionEvent(e: TetrisActionEvent): void {
+        const nextGameState: TetrisGameState = this.curGameState.handleActionEvent(e);
+        this.dispatchTransitionData(this.curGameState, nextGameState);
+        this.curGameState = nextGameState.clearTransitionData();
+    }
+
+    dispatchTransitionData(prevState: TetrisGameState, nextState: TetrisGameState) {
+        if (nextState.transitionData.size > 0) {
+            for (const transitionData of nextState.transitionData) {
+                const e: TetrisStateTransitionEvent = {
+                    prevState,
+                    nextState
+                };
+                this.transitionDispatcher.dispatch(e);
+            }
+        }
+    }
 }

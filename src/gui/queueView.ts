@@ -1,4 +1,4 @@
-import {PiecePrototype} from "../tetris/obj/piece/piecePrototype";
+import {PiecePrototype} from "../tetris/state/piece/piecePrototype";
 import {Generator} from "../util/generator";
 import {BlockRenderer} from "./blockRenderer";
 import {PiecePrototypeView} from "./piecePrototypeView";

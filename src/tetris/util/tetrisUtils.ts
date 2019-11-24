@@ -1,7 +1,7 @@
-import {Piece} from "../obj/piece/piece";
-import {Matrix} from "../obj/matrix/matrix";
-import {PiecePrototype} from "../obj/piece/piecePrototype";
-import {Position} from "../obj/position";
+import {Piece} from "../state/piece/piece";
+import {Matrix} from "../state/matrix/matrix";
+import {PiecePrototype} from "../state/piece/piecePrototype";
+import {Position} from "../state/position";
 import {List} from "immutable";
 
 export const DIR_UP = new Position({row: 1, col: 0});

@@ -4,12 +4,13 @@ import {SimpleBlockRenderer} from "../gui/blockRenderer";
 import {MatrixView} from "../gui/matrixView";
 import {PiecePrototypeView} from "../gui/piecePrototypeView";
 import {QueueView} from "../gui/queueView";
-import {Matrix} from "../tetris/obj/matrix/matrix";
-import {newTetrisGame, TetrisGame} from "../tetris/game/tetrisGame";
-import {PiecePrototype} from "../tetris/obj/piece/piecePrototype";
+import {TetrisGame} from "../tetris/game/tetrisGame";
+import {Matrix} from "../tetris/state/matrix/matrix";
+import {PiecePrototype} from "../tetris/state/piece/piecePrototype";
 import {ALL_SRS_TETROMINOES} from "../tetris/data/tetromino";
 import {KeyboardInputSource} from "../input/keyboardInputSource";
 import {VirtualGamepad} from "../input/virtualGamepad";
+import {newTetrisGameState} from "../tetris/state/tetrisGameState";
 import {BagGenerator} from "../util/generator";
 import {Random} from "../util/random";
 
@@ -35,7 +36,10 @@ export class PracticeScreen implements Screen {
 
     constructor() {
         const pieceGenerator = BagGenerator.newBagGenerator<PiecePrototype>(List(ALL_SRS_TETROMINOES), new Random(BigInt(Date.now())));
-        this.game = newTetrisGame(new Matrix({numRows: 40, numCols: 10}), pieceGenerator, 1.0, 3.0, 0.5);
+        this.game = new TetrisGame(newTetrisGameState(new Matrix({
+            numRows: 40,
+            numCols: 10
+        }), pieceGenerator, 1.0, 3.0, 0.5));
         this.virtualGamepad = new VirtualGamepad(0.2, 60);
         this.keyboard = new KeyboardInputSource();
         this.keyboard.registerInputHandler(this.virtualGamepad.inputHandler);
@@ -49,7 +53,7 @@ export class PracticeScreen implements Screen {
 
     init(): void {
         this.keyboard.init();
-        this.matrixView.update(this.game.sim.matrix, this.game.sim.fallingPiece);
+        this.matrixView.update(this.game.getState().sim.matrix, this.game.getState().sim.fallingPiece);
     }
 
     exit(): void {
@@ -60,9 +64,9 @@ export class PracticeScreen implements Screen {
         this.virtualGamepad.update(dt);
         const inputEventBufferSnapshot = this.inputEventBuffer.slice();
         for (const e of inputEventBufferSnapshot) {
-            this.game = this.game.handleActionEvent(e);
+            this.game.handleActionEvent(e);
         }
-        this.game = this.game.tick(dt);
+        this.game.tick(dt);
         this.inputEventBuffer = [];
     }
 
@@ -70,14 +74,14 @@ export class PracticeScreen implements Screen {
         const ctx = canvas.getContext("2d")!;
 
         // Draw matrix:
-        this.matrixView.update(this.game.sim.matrix, this.game.sim.fallingPiece);
+        this.matrixView.update(this.game.getState().sim.matrix, this.game.getState().sim.fallingPiece);
         const matrixCanvas: CanvasImageSource = this.matrixView.getImageSource();
         const matrixX = canvas.width / 2 - this.matrixView.getWidth() / 2;
         ctx.drawImage(matrixCanvas, matrixX, 0);
         ctx.strokeRect(matrixX, 0, this.matrixView.getWidth(), this.matrixView.getHeight());
 
         // Draw piece previews:
-        this.queueView.update(this.game.sim.queue);
+        this.queueView.update(this.game.getState().sim.queue);
         const previews: PiecePrototypeView[] = this.queueView.getPieceViews();
         let previewY = 0;
         for (let i = 0; i < this.queueView.previewLen; i++) {
@@ -89,7 +93,7 @@ export class PracticeScreen implements Screen {
         }
 
         // Draw hold piece:
-        this.holdView.update(this.game.sim.heldPiece);
+        this.holdView.update(this.game.getState().sim.heldPiece);
         const holdCanvas = this.holdView.getImageSource();
         const holdX = matrixX - 5 - this.holdView.getWidth();
         ctx.drawImage(holdCanvas, holdX, 0);

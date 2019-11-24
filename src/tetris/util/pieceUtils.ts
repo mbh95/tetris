@@ -1,8 +1,8 @@
 import {List, Map, Range} from "immutable";
-import {Block} from "../obj/block";
-import {Orientation} from "../obj/piece/orientation";
-import {Transition} from "../obj/piece/transition";
-import {Position} from "../obj/position";
+import {Block} from "../state/block";
+import {Orientation} from "../state/piece/orientation";
+import {Transition} from "../state/piece/transition";
+import {Position} from "../state/position";
 
 export type BlockTable = [number, number][];
 

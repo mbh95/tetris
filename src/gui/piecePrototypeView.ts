@@ -1,5 +1,5 @@
-import {Piece} from "../tetris/obj/piece/piece";
-import {PiecePrototype} from "../tetris/obj/piece/piecePrototype";
+import {Piece} from "../tetris/state/piece/piece";
+import {PiecePrototype} from "../tetris/state/piece/piecePrototype";
 import {BlockRenderer} from "./blockRenderer";
 
 export class PiecePrototypeView {
