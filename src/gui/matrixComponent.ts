@@ -40,7 +40,11 @@ export class MatrixComponent {
         return this.visibleRows * this.blockSize;
     }
 
-    private drawBlock(matrixBlock: MatrixBlock) {
+    getImageSource(): CanvasImageSource {
+        return this.canvas;
+    }
+
+    private drawBlock(matrixBlock: MatrixBlock): void {
         const row = matrixBlock.matrixPos.row;
         const col = matrixBlock.matrixPos.col;
         const y: number = this.getHeight() - this.blockSize - (row * this.blockSize);
@@ -48,9 +52,9 @@ export class MatrixComponent {
         this.blockRenderer.drawBlock(this.ctx2d, matrixBlock.block, x, y, this.blockSize);
     }
 
-    update(matrix: Matrix, fallingPiece: Piece): CanvasImageSource {
+    update(matrix: Matrix, fallingPiece: Piece): void {
         if (this.lastDrawnMatrix === matrix && this.lastDrawnFallingPiece === fallingPiece) {
-            return this.canvas;
+            return;
         }
         this.ctx2d.save();
         this.ctx2d.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -70,6 +74,5 @@ export class MatrixComponent {
 
         this.lastDrawnMatrix = matrix;
         this.lastDrawnFallingPiece = fallingPiece;
-        return this.canvas;
     }
 }
