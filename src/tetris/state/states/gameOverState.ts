@@ -1,11 +1,11 @@
 import {List} from "immutable";
 import {TetrisActionEvent} from "../../../events/actionEvent";
 import {TetrisSim} from "../sim/tetrisSim";
-import {TetrisGameState, TetrisGameStateType} from "../tetrisGameState";
+import {AnyGameState, TetrisGameState, TetrisGameStateType} from "../tetrisGameState";
 import {TetrisProps} from "../tetrisProps";
 import {TransitionData} from "../transition";
 
-export class GameOverState implements TetrisGameState {
+export class GameOverState implements TetrisGameState<GameOverState> {
     readonly sim: TetrisSim;
     readonly props: TetrisProps;
     readonly transitionData: List<TransitionData>;
@@ -18,19 +18,20 @@ export class GameOverState implements TetrisGameState {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handleActionEvent(e: TetrisActionEvent): TetrisGameState {
+    handleActionEvent(e: TetrisActionEvent): AnyGameState {
         return this;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    tick(dt: number): TetrisGameState {
+    tick(dt: number): AnyGameState {
         return this;
     }
 
-    clearTransitionData(): TetrisGameState {
+    clearTransitionData(): GameOverState {
         return new GameOverState(this.sim, this.props, List());
     }
-    pushTransitionData(transitionData: TransitionData): TetrisGameState {
+
+    pushTransitionData(transitionData: TransitionData): GameOverState {
         return new GameOverState(this.sim, this.props, this.transitionData.push(transitionData));
     }
 }

@@ -3,7 +3,7 @@ import {TetrisActionEvent, TetrisActionEventType} from "../../../events/actionEv
 import {DIR_DOWN, DIR_LEFT, DIR_RIGHT, isPieceOnGround} from "../../util/tetrisUtils";
 import {SimLockPieceResult} from "../sim/simLockPieceResult";
 import {TetrisSim} from "../sim/tetrisSim";
-import {TetrisGameState, TetrisGameStateType} from "../tetrisGameState";
+import {AnyGameState, TetrisGameState, TetrisGameStateType} from "../tetrisGameState";
 import {TetrisProps} from "../tetrisProps";
 import {TransitionData, TransitionType} from "../transition";
 import {DelayState} from "./delayState";
@@ -26,7 +26,7 @@ export class FallingPieceState extends Record({
     gravityAccumulator: 0,
     lockCountdown: 3,
     canHold: true,
-}) implements TetrisGameState {
+}) implements TetrisGameState<FallingPieceState> {
 
     readonly sim!: TetrisSim;
     readonly props!: TetrisProps;
@@ -42,47 +42,56 @@ export class FallingPieceState extends Record({
         this.type = TetrisGameStateType.FALLING_PIECE;
     }
 
-    private maybeGameOver(): TetrisGameState {
+    private maybeGameOver(): AnyGameState {
         if (!this.sim.matrix.isPieceValid(this.sim.fallingPiece)) {
             return new GameOverState(this.sim, this.props, this.transitionData);
         }
         return this;
     }
 
-    private maybeTransition(nextState: TetrisGameState, maybeTransitionData: TransitionData): TetrisGameState {
+    private maybeTransitionSelf(nextState: FallingPieceState, maybeTransitionData: TransitionData): FallingPieceState {
         if (nextState === this) {
             return this;
         }
         return nextState.pushTransitionData(maybeTransitionData);
     }
 
-    handleActionEvent(e: TetrisActionEvent): TetrisGameState {
+    private maybeTransitionOther(nextState: AnyGameState, maybeTransitionData: TransitionData): AnyGameState {
+        if (nextState === this) {
+            return this;
+        }
+        return nextState.pushTransitionData(maybeTransitionData);
+    }
+
+    handleActionEvent(e: TetrisActionEvent): AnyGameState {
         switch (e.type) {
             case TetrisActionEventType.MOVE_L:
-                return this.maybeTransition(this.merge({sim: this.sim.movePiece(DIR_LEFT)}),
-                    new TransitionData({type: TransitionType.ACTION_MOVE_L}));
+                return this.maybeTransitionSelf(this.merge({sim: this.sim.movePiece(DIR_LEFT)}),
+                    new TransitionData({type: TransitionType.MOVE_L}));
             case TetrisActionEventType.MOVE_R:
-                return this.maybeTransition(this.merge({sim: this.sim.movePiece(DIR_RIGHT)}),
-                    new TransitionData({type: TransitionType.ACTION_MOVE_R}));
+                return this.maybeTransitionSelf(this.merge({sim: this.sim.movePiece(DIR_RIGHT)}),
+                    new TransitionData({type: TransitionType.MOVE_R}));
             case TetrisActionEventType.SOFT_DROP:
-                return this.maybeTransition(this.merge({sim: this.sim.movePiece(DIR_DOWN)}),
-                    new TransitionData({type: TransitionType.ACTION_SOFT_DROP}));
+                return this.maybeTransitionSelf(this.merge({sim: this.sim.movePiece(DIR_DOWN)}),
+                    new TransitionData({type: TransitionType.SOFT_DROP_FALL}));
             case TetrisActionEventType.HARD_DROP:
-                return this.merge({sim: this.sim.hardDrop()}).lockPiece(TransitionType.ACTION_HARD_DROP);
+                return this.maybeTransitionSelf(this.merge({sim: this.sim.hardDrop()}),
+                    new TransitionData({type: TransitionType.HARD_DROP_FALL}))
+                    .lockPiece(TransitionType.HARD_DROP_LOCK);
             case TetrisActionEventType.HOLD:
-                return this.maybeTransition(this.hold(),
+                return this.maybeTransitionOther(this.hold(),
                     new TransitionData({type: TransitionType.ACTION_HOLD}));
             case TetrisActionEventType.ROTATE_CW:
-                return this.maybeTransition(this.merge({sim: this.sim.rotateCw()}),
-                    new TransitionData({type: TransitionType.ACTION_ROTATE_CW}));
+                return this.maybeTransitionSelf(this.merge({sim: this.sim.rotateCw()}),
+                    new TransitionData({type: TransitionType.ROTATE_CW}));
             case TetrisActionEventType.ROTATE_CCW:
-                return this.maybeTransition(this.merge({sim: this.sim.rotateCcw()}),
-                    new TransitionData({type: TransitionType.ACTION_ROTATE_CCW}));
+                return this.maybeTransitionSelf(this.merge({sim: this.sim.rotateCcw()}),
+                    new TransitionData({type: TransitionType.ROTATE_CCW}));
         }
         return this;
     }
 
-    private hold(): TetrisGameState {
+    private hold(): AnyGameState {
         if (this.canHold) {
             return this.merge({
                 canHold: false,
@@ -94,14 +103,19 @@ export class FallingPieceState extends Record({
         return this;
     }
 
-    private lockPiece(cause: TransitionType): TetrisGameState {
+    private lockPiece(cause: TransitionType): AnyGameState {
         const simLockResult: SimLockPieceResult = this.sim.lockPieceAndSpawnNext();
-        const postLockState: TetrisGameState = new FallingPieceState({
+        const postLockState: AnyGameState = new FallingPieceState({
             sim: simLockResult.newSim,
             props: this.props,
             transitionData: this.transitionData.push(new TransitionData({
                 type: cause,
-                simLockPieceResult: simLockResult
+                lockData: {
+                    prevMatrix: this.sim.matrix,
+                    newMatrix: simLockResult.matrixLockPieceResult.newMatrix,
+                    lockedPiece: this.sim.fallingPiece,
+                    clearedRows: simLockResult.matrixLockPieceResult.clearedRows
+                }
             }))
         }).maybeGameOver();
 
@@ -112,11 +126,11 @@ export class FallingPieceState extends Record({
         return postLockState;
     }
 
-    tick(dt: number): TetrisGameState {
+    tick(dt: number): AnyGameState {
         if (isPieceOnGround(this.sim.fallingPiece, this.sim.matrix)) {
             const newLockCountdown = this.lockCountdown - dt;
             if (newLockCountdown <= 0) {
-                return this.lockPiece(TransitionType.TICK);
+                return this.lockPiece(TransitionType.TIME_LOCK);
             }
             return this.merge({lockCountdown: newLockCountdown});
         } else {
@@ -132,7 +146,7 @@ export class FallingPieceState extends Record({
                 return this.merge({
                     sim: this.sim.merge({fallingPiece: newPiece}),
                     gravityAccumulator: newGravityAccumulator
-                }).pushTransitionData(new TransitionData({type: TransitionType.GRAVITY}));
+                }).pushTransitionData(new TransitionData({type: TransitionType.GRAVITY_FALL}));
             } else {
                 return this.merge({
                     gravityAccumulator: newGravityAccumulator
@@ -141,11 +155,11 @@ export class FallingPieceState extends Record({
         }
     }
 
-    clearTransitionData(): TetrisGameState {
+    clearTransitionData(): FallingPieceState {
         return this.merge({transitionData: List()});
     }
 
-    pushTransitionData(transitionData: TransitionData): TetrisGameState {
+    pushTransitionData(transitionData: TransitionData): FallingPieceState {
         return this.merge({transitionData: this.transitionData.push(transitionData)});
     }
 }

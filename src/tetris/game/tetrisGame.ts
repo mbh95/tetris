@@ -1,35 +1,40 @@
 import {TetrisActionEvent} from "../../events/actionEvent";
 import {TetrisStateTransitionEvent} from "../../events/transitionEvent";
 import {Dispatcher} from "../../util/dispatcher";
-import {TetrisGameState} from "../state/tetrisGameState";
+import {AnyGameState, TetrisGameState} from "../state/tetrisGameState";
+import {SpinDetector} from "./meta/spinDetector";
 
 export class TetrisGame {
-    private curGameState: TetrisGameState;
+    private curGameState: AnyGameState;
 
     private readonly transitionDispatcher: Dispatcher<TetrisStateTransitionEvent>;
 
-    constructor(initialGameState: TetrisGameState) {
+    constructor(initialGameState: AnyGameState) {
         this.curGameState = initialGameState;
         this.transitionDispatcher = new Dispatcher<TetrisStateTransitionEvent>();
+
+        const spinDetector: SpinDetector = new SpinDetector();
+
+        this.transitionDispatcher.registerCallback(spinDetector.transitionHandler);
     }
 
-    getState(): TetrisGameState {
+    getState(): AnyGameState {
         return this.curGameState;
     }
 
     tick(dt: number): void {
-        const nextGameState: TetrisGameState = this.curGameState.tick(dt);
+        const nextGameState: AnyGameState = this.curGameState.tick(dt);
         this.dispatchTransitionData(this.curGameState, nextGameState);
         this.curGameState = nextGameState.clearTransitionData();
     }
 
     handleActionEvent(e: TetrisActionEvent): void {
-        const nextGameState: TetrisGameState = this.curGameState.handleActionEvent(e);
+        const nextGameState: AnyGameState = this.curGameState.handleActionEvent(e);
         this.dispatchTransitionData(this.curGameState, nextGameState);
         this.curGameState = nextGameState.clearTransitionData();
     }
 
-    dispatchTransitionData(prevState: TetrisGameState, nextState: TetrisGameState) {
+    dispatchTransitionData(prevState: AnyGameState, nextState: AnyGameState) {
         if (nextState.transitionData.size > 0) {
             for (const transitionData of nextState.transitionData) {
                 const e: TetrisStateTransitionEvent = {

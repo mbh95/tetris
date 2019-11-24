@@ -1,6 +1,6 @@
-import {TetrisGameState} from "../tetris/state/tetrisGameState";
+import {AnyGameState} from "../tetris/state/tetrisGameState";
 
 export interface TetrisStateTransitionEvent {
-    prevState: TetrisGameState;
-    nextState: TetrisGameState;
+    prevState: AnyGameState;
+    nextState: AnyGameState;
 }

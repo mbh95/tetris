@@ -3,7 +3,9 @@ import {TetrisActionEvent} from "../../events/actionEvent";
 import {Matrix} from "./matrix/matrix";
 import {Generator} from "../../util/generator";
 import {PiecePrototype} from "./piece/piecePrototype";
+import {DelayState} from "./states/delayState";
 import {FallingPieceState} from "./states/fallingPieceState";
+import {GameOverState} from "./states/gameOverState";
 import {TetrisProps} from "./tetrisProps";
 import {TetrisSim} from "./sim/tetrisSim";
 import {TransitionData} from "./transition";
@@ -14,23 +16,25 @@ export enum TetrisGameStateType {
     GAME_OVER = "GAME_OVER",
 }
 
-export interface TetrisGameState {
+export type AnyGameState = DelayState | FallingPieceState | GameOverState;
+
+export interface TetrisGameState<T> {
     readonly sim: TetrisSim;
     readonly props: TetrisProps;
     readonly transitionData: List<TransitionData>;
     readonly type: TetrisGameStateType;
 
-    handleActionEvent(e: TetrisActionEvent): TetrisGameState;
+    handleActionEvent(e: TetrisActionEvent): DelayState | FallingPieceState | GameOverState;
 
-    tick(dt: number): TetrisGameState;
+    tick(dt: number): AnyGameState;
 
-    clearTransitionData(): TetrisGameState;
+    clearTransitionData(): T;
 
-    pushTransitionData(transitionData: TransitionData): TetrisGameState;
+    pushTransitionData(transitionData: TransitionData): T;
 
 }
 
-export function newTetrisGameState(matrix: Matrix, queue: Generator<PiecePrototype>, gravityRate: number, lockDelay: number, clearDelay: number): TetrisGameState {
+export function newTetrisGameState(matrix: Matrix, queue: Generator<PiecePrototype>, gravityRate: number, lockDelay: number, clearDelay: number): AnyGameState {
     const newSim = TetrisSim.newTetrisSim(matrix, queue);
     const newProps = new TetrisProps(gravityRate, lockDelay, clearDelay);
     return new FallingPieceState({sim: newSim, props: newProps});

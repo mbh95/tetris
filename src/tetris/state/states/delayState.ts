@@ -1,23 +1,23 @@
 import {List} from "immutable";
 import {TetrisActionEvent} from "../../../events/actionEvent";
 import {TetrisSim} from "../sim/tetrisSim";
-import {TetrisGameState, TetrisGameStateType} from "../tetrisGameState";
+import {AnyGameState, TetrisGameState, TetrisGameStateType} from "../tetrisGameState";
 import {TetrisProps} from "../tetrisProps";
 import {TransitionData} from "../transition";
 
-export class DelayState implements TetrisGameState {
+export class DelayState implements TetrisGameState<DelayState> {
     readonly sim: TetrisSim;
     readonly props: TetrisProps;
 
-    readonly beforeState: TetrisGameState;
-    readonly afterState: TetrisGameState;
+    readonly beforeState: AnyGameState;
+    readonly afterState: AnyGameState;
 
     readonly totalDelay: number;
     readonly delayCountdown: number;
     readonly transitionData: List<TransitionData>;
     readonly type: TetrisGameStateType = TetrisGameStateType.DELAY;
 
-    constructor(beforeState: TetrisGameState, afterState: TetrisGameState, totalDelay: number, curDelay: number, transitionData: List<TransitionData>) {
+    constructor(beforeState: AnyGameState, afterState: AnyGameState, totalDelay: number, curDelay: number, transitionData: List<TransitionData>) {
         this.sim = beforeState.sim;
         this.props = beforeState.props;
 
@@ -29,11 +29,11 @@ export class DelayState implements TetrisGameState {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    handleActionEvent(e: TetrisActionEvent): TetrisGameState {
+    handleActionEvent(e: TetrisActionEvent): AnyGameState {
         return this;
     }
 
-    tick(dt: number): TetrisGameState {
+    tick(dt: number): AnyGameState {
         const newDelayCountdown = this.delayCountdown - dt;
         if (newDelayCountdown <= 0) {
             return this.afterState
@@ -42,11 +42,11 @@ export class DelayState implements TetrisGameState {
     }
 
 
-    clearTransitionData(): TetrisGameState {
+    clearTransitionData(): DelayState {
         return new DelayState(this.beforeState, this.afterState, this.totalDelay, this. delayCountdown, List());
     }
 
-    pushTransitionData(transitionData: TransitionData): TetrisGameState {
+    pushTransitionData(transitionData: TransitionData): DelayState {
         return new DelayState(this.beforeState, this.afterState, this.totalDelay, this. delayCountdown, this.transitionData.push(transitionData));
     }
 }
