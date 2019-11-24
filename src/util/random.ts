@@ -4,7 +4,7 @@
 
 const A = 6364136223846793005n;
 const C = 1442695040888963407n;
-const M = 1n << 64n;
+const M = BigInt(1) << BigInt(64);
 
 function nextVal(cur: bigint): bigint {
     return ((cur * A) + C) % M;

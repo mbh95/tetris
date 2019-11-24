@@ -1,4 +1,3 @@
-import {Piece} from "../tetris/obj/piece/piece";
 import {PiecePrototype} from "../tetris/obj/piece/piecePrototype";
 import {Generator} from "../util/generator";
 import {BlockRenderer} from "./blockRenderer";
