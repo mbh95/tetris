@@ -2,7 +2,7 @@
   "name": "tetris",
   "version": "1.0.0",
   "description": "Tetris in TypeScript.",
-  "homepage": "https://mbh95.github.io/tetris",
+  "homepage": "https://mbh95.github.io/tetris-ts",
   "scripts": {
     "start": "webpack-dev-server --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
