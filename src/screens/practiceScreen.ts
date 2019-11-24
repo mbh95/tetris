@@ -79,12 +79,13 @@ export class PracticeScreen implements Screen {
         // Draw piece previews:
         this.queueView.update(this.game.sim.queue);
         const previews: PiecePrototypeView[] = this.queueView.getPieceViews();
+        let previewY = 0;
         for (let i = 0; i < this.queueView.previewLen; i++) {
             const pieceView: PiecePrototypeView = previews[i];
             const previewX = matrixX + this.matrixView.getWidth() + 5;
-            const previewY = i * (pieceView.getHeight() + 5);
             ctx.drawImage(pieceView.getImageSource(), previewX, previewY);
             ctx.strokeRect(previewX, previewY, pieceView.getWidth(), pieceView.getHeight());
+            previewY += (pieceView.getHeight() + 5);
         }
 
         // Draw hold piece:

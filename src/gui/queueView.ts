@@ -17,7 +17,11 @@ export class QueueView {
 
         this.previews = new Array<PiecePrototypeView>(previewLen);
         for (let i = 0; i < this.previewLen; i++) {
-            this.previews[i] = new PiecePrototypeView(visibleRows, visibleCols, blockSize, blockRenderer)
+            let size = blockSize;
+            if (i > 0) {
+                size = blockSize/2;
+            }
+            this.previews[i] = new PiecePrototypeView(visibleRows, visibleCols, size, blockRenderer)
         }
     }
 
