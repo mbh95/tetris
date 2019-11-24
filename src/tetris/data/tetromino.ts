@@ -1,7 +1,8 @@
+import {List} from "immutable";
 import {Block} from "../obj/block";
 import {PiecePrototype} from "../obj/piece/piecePrototype";
 import * as PieceUtils from "../util/pieceUtils";
-import {List} from "immutable";
+import {BlockColor} from "./blockColor";
 import BlockTable = PieceUtils.BlockTable;
 import KickTable = PieceUtils.KickTable;
 
@@ -41,13 +42,13 @@ const DEFAULT_KICK_OFFSET_TABLE: KickTable = [
     [[0, 0]], // LEFT
 ];
 
-const BLOCK_I = new Block({colorId: 1});
-const BLOCK_J = new Block({colorId: 2});
-const BLOCK_L = new Block({colorId: 3});
-const BLOCK_O = new Block({colorId: 4});
-const BLOCK_S = new Block({colorId: 5});
-const BLOCK_T = new Block({colorId: 6});
-const BLOCK_Z = new Block({colorId: 7});
+const BLOCK_I = new Block({color: BlockColor.I_CYAN});
+const BLOCK_J = new Block({color: BlockColor.J_BLUE});
+const BLOCK_L = new Block({color: BlockColor.L_ORANGE});
+const BLOCK_O = new Block({color: BlockColor.O_YELLOW});
+const BLOCK_S = new Block({color: BlockColor.S_GREEN});
+const BLOCK_T = new Block({color: BlockColor.T_PURPLE});
+const BLOCK_Z = new Block({color: BlockColor.Z_RED});
 
 export const SRS_I: PiecePrototype = new PiecePrototype(
     PieceUtils.orientationsFromBlocks(I_BLOCK_TABLE, BLOCK_I),

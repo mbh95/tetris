@@ -1,13 +1,14 @@
 import {Record} from "immutable";
+import {BlockColor} from "../data/blockColor";
 
 interface BlockParams {
-    colorId?: number;
+    color?: BlockColor;
 }
 
 export class Block extends Record({
-    colorId: 0
+    color: BlockColor.UNKNOWN
 }) {
-    readonly colorId!: number;
+    readonly color!: BlockColor;
 
     constructor(params?: BlockParams) {
         params? super(params) : super();
