@@ -131,13 +131,13 @@ export class FallingPieceState extends Record({
     }
 
     tick(dt: number): AnyGameState {
-        console.log(this.gravityAccumulator);
         if (isPieceOnGround(this.sim.fallingPiece, this.sim.matrix)) {
+            const resetGravityState = this.merge({gravityAccumulator: 0});
             const newLockCountdown = this.lockCountdown - dt;
             if (newLockCountdown <= 0) {
-                return this.merge({gravityAccumulator: 0}).lockPiece(TransitionType.TIME_LOCK);
+                return resetGravityState.lockPiece(TransitionType.TIME_LOCK);
             }
-            return this.merge({gravityAccumulator: 0}).merge({lockCountdown: newLockCountdown});
+            return resetGravityState.merge({lockCountdown: newLockCountdown});
         } else {
             const newGravityAccumulator = this.gravityAccumulator + dt * this.props.gravityRate;
             // eslint-disable-next-line @typescript-eslint/no-this-alias
