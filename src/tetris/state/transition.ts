@@ -1,7 +1,7 @@
-import {List, Record, Set} from "immutable";
+import {Set} from "immutable";
 import {Matrix} from "./matrix/matrix";
 import {Piece} from "./piece/piece";
-import {SimLockPieceResult} from "./sim/simLockPieceResult";
+import {AnyGameState} from "./tetrisGameState";
 
 export enum TransitionType {
     UNKNOWN = "UNKNOWN",
@@ -18,26 +18,27 @@ export enum TransitionType {
     GAME_OVER = "GAME_OVER"
 }
 
-interface LockData {
-    prevMatrix: Matrix;
-    newMatrix: Matrix;
-    lockedPiece: Piece;
-    clearedRows: Set<number>;
+export interface LockData {
+    readonly prevMatrix: Matrix;
+    readonly newMatrix: Matrix;
+    readonly lockedPiece: Piece;
+    readonly clearedRows: Set<number>;
 }
 
-interface TransitionDataParams {
-    type: TransitionType;
-    lockData?: LockData;
-}
-
-export class TransitionData extends Record<TransitionDataParams>({
-    type: TransitionType.UNKNOWN,
-    lockData: undefined
-}) {
+export interface TransitionData {
+    readonly transitionType: TransitionType;
     readonly lockData?: LockData;
+}
 
-    constructor(params?: TransitionDataParams) {
-        params ? super(params) : super();
+export class StateTransition {
+    readonly beforeState: AnyGameState;
+    readonly afterState: AnyGameState;
+    readonly transitionData: TransitionData;
+
+    constructor(beforeState: AnyGameState, afterState: AnyGameState, data: TransitionData) {
+        this.beforeState = beforeState;
+        this.afterState = afterState;
+        this.transitionData = data;
     }
 }
 

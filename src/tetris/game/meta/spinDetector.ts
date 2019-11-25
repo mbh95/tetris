@@ -1,8 +1,7 @@
-import {TetrisStateTransitionEvent} from "../../../events/transitionEvent";
 import {
     isPieceChangeTransition,
     TransitionType,
-    TransitionData,
+    StateTransition,
     isPieceLockTransition,
     isRotationTransition
 } from "../../state/transition";
@@ -12,26 +11,25 @@ export class SpinDetector {
 
     private lastPieceChangeTransitionType: TransitionType | undefined;
 
-    readonly transitionHandler: (e: TetrisStateTransitionEvent) => void;
+    readonly transitionHandler: (e: StateTransition) => void;
 
     constructor() {
-        this.transitionHandler = (e: TetrisStateTransitionEvent) => this.handleTransitionEvent(e);
+        this.transitionHandler = (e: StateTransition) => this.handleTransitionEvent(e);
     }
 
-    handleTransitionEvent(e: TetrisStateTransitionEvent): void {
-        e.nextState.transitionData.forEach((transition: TransitionData) => {
-            this.lastPieceChangeTransitionType = isPieceChangeTransition(transition.type) ? transition.type : this.lastPieceChangeTransitionType;
-            if (isPieceLockTransition(transition.type)) {
-                console.log(this.lastPieceChangeTransitionType);
-                if (this.lastPieceChangeTransitionType !== undefined && isRotationTransition(this.lastPieceChangeTransitionType)) {
-                    console.log("ROTATE->LOCK");
-                    if (transition.lockData !== undefined) {
-                        if (!canPieceMove(transition.lockData.lockedPiece, transition.lockData.prevMatrix)) {
-                            console.log("SPIN!!!!!!!");
-                        }
+    handleTransitionEvent(e: StateTransition): void {
+
+        this.lastPieceChangeTransitionType = isPieceChangeTransition(e.transitionData.transitionType) ? e.transitionData.transitionType : this.lastPieceChangeTransitionType;
+        if (isPieceLockTransition(e.transitionData.transitionType)) {
+            console.log(this.lastPieceChangeTransitionType);
+            if (this.lastPieceChangeTransitionType !== undefined && isRotationTransition(this.lastPieceChangeTransitionType)) {
+                console.log("ROTATE->LOCK");
+                if (e.transitionData.lockData !== undefined) {
+                    if (!canPieceMove(e.transitionData.lockData.lockedPiece, e.transitionData.lockData.prevMatrix)) {
+                        console.log("SPIN!!!!!!!");
                     }
                 }
             }
-        });
+        }
     }
 }

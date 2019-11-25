@@ -1,17 +1,17 @@
 import {TetrisActionEvent} from "../../events/actionEvent";
-import {TetrisStateTransitionEvent} from "../../events/transitionEvent";
 import {Dispatcher} from "../../util/dispatcher";
-import {AnyGameState, TetrisGameState} from "../state/tetrisGameState";
+import {AnyGameState} from "../state/tetrisGameState";
+import {StateTransition} from "../state/transition";
 import {SpinDetector} from "./meta/spinDetector";
 
 export class TetrisGame {
     private curGameState: AnyGameState;
 
-    private readonly transitionDispatcher: Dispatcher<TetrisStateTransitionEvent>;
+    private readonly transitionDispatcher: Dispatcher<StateTransition>;
 
     constructor(initialGameState: AnyGameState) {
         this.curGameState = initialGameState;
-        this.transitionDispatcher = new Dispatcher<TetrisStateTransitionEvent>();
+        this.transitionDispatcher = new Dispatcher<StateTransition>();
 
         const spinDetector: SpinDetector = new SpinDetector();
 
@@ -25,24 +25,18 @@ export class TetrisGame {
     tick(dt: number): void {
         const nextGameState: AnyGameState = this.curGameState.tick(dt);
         this.dispatchTransitionData(this.curGameState, nextGameState);
-        this.curGameState = nextGameState.clearTransitionData();
+        this.curGameState = nextGameState.clearTransitionBuffer();
     }
 
     handleActionEvent(e: TetrisActionEvent): void {
         const nextGameState: AnyGameState = this.curGameState.handleActionEvent(e);
         this.dispatchTransitionData(this.curGameState, nextGameState);
-        this.curGameState = nextGameState.clearTransitionData();
+        this.curGameState = nextGameState.clearTransitionBuffer();
     }
 
     dispatchTransitionData(prevState: AnyGameState, nextState: AnyGameState) {
-        if (nextState.transitionData.size > 0) {
-            for (const transitionData of nextState.transitionData) {
-                const e: TetrisStateTransitionEvent = {
-                    prevState,
-                    nextState
-                };
-                this.transitionDispatcher.dispatch(e);
-            }
+        for (const transitionData of nextState.transitionBuffer) {
+            this.transitionDispatcher.dispatch(transitionData);
         }
     }
 }

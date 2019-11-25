@@ -8,7 +8,7 @@ import {FallingPieceState} from "./states/fallingPieceState";
 import {GameOverState} from "./states/gameOverState";
 import {TetrisProps} from "./tetrisProps";
 import {TetrisSim} from "./sim/tetrisSim";
-import {TransitionData} from "./transition";
+import {StateTransition} from "./transition";
 
 export enum TetrisGameStateType {
     FALLING_PIECE = "FALLING_PIECE",
@@ -21,16 +21,16 @@ export type AnyGameState = DelayState | FallingPieceState | GameOverState;
 export interface TetrisGameState<T> {
     readonly sim: TetrisSim;
     readonly props: TetrisProps;
-    readonly transitionData: List<TransitionData>;
+    readonly transitionBuffer: List<StateTransition>;
     readonly type: TetrisGameStateType;
 
     handleActionEvent(e: TetrisActionEvent): DelayState | FallingPieceState | GameOverState;
 
     tick(dt: number): AnyGameState;
 
-    clearTransitionData(): T;
+    clearTransitionBuffer(): T;
 
-    pushTransitionData(transitionData: TransitionData): T;
+    pushTransition(transitionData: StateTransition): T;
 
 }
 
