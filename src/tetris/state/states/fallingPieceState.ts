@@ -140,7 +140,6 @@ export class FallingPieceState extends Record({
             return resetGravityState.merge({lockCountdown: newLockCountdown});
         } else {
             const newGravityAccumulator = this.gravityAccumulator + dt * this.props.gravityRate;
-            // eslint-disable-next-line @typescript-eslint/no-this-alias
             let nextState: FallingPieceState = this.merge({gravityAccumulator: newGravityAccumulator});
             while (nextState.gravityAccumulator >= 1.0) {
                 const newPiece: Piece = nextState.sim.fallingPiece.maybeTranslated(DIR_DOWN, piece => nextState.sim.matrix.isPieceValid(piece));
