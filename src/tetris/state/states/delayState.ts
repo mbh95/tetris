@@ -38,7 +38,6 @@ export class DelayState implements TetrisGameState<DelayState> {
         this.transitionBuffer = transitionData;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     handleActionEvent(e: TetrisActionEvent): AnyGameState {
         return this;
     }

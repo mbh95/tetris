@@ -17,12 +17,10 @@ export class GameOverState implements TetrisGameState<GameOverState> {
         this.transitionBuffer = transitionData;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     handleActionEvent(e: TetrisActionEvent): AnyGameState {
         return this;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     tick(dt: number): AnyGameState {
         return this;
     }
