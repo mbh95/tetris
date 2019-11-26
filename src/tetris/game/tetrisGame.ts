@@ -34,7 +34,7 @@ export class TetrisGame {
         this.curGameState = nextGameState.clearTransitionBuffer();
     }
 
-    dispatchTransitionData(prevState: AnyGameState, nextState: AnyGameState) {
+    dispatchTransitionData(prevState: AnyGameState, nextState: AnyGameState): void {
         for (const transitionData of nextState.transitionBuffer) {
             this.transitionDispatcher.dispatch(transitionData);
         }

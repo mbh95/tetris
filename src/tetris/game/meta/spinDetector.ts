@@ -14,11 +14,10 @@ export class SpinDetector {
     readonly transitionHandler: (e: StateTransition) => void;
 
     constructor() {
-        this.transitionHandler = (e: StateTransition) => this.handleTransitionEvent(e);
+        this.transitionHandler = (e: StateTransition): void => this.handleTransitionEvent(e);
     }
 
     handleTransitionEvent(e: StateTransition): void {
-
         this.lastPieceChangeTransitionType = isPieceChangeTransition(e.transitionData.transitionType) ? e.transitionData.transitionType : this.lastPieceChangeTransitionType;
         if (isPieceLockTransition(e.transitionData.transitionType)) {
             console.log(this.lastPieceChangeTransitionType);

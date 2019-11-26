@@ -22,7 +22,7 @@ export class Random {
     }
 
     getWithMod(high: number): number {
-        return bigintToNumberInRange(this.value, 0, high);
+        return this.getInRange(0, high);
     }
 
     getInRange(low: number, high: number): number {

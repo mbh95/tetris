@@ -1,5 +1,5 @@
-import {BlockColor} from "../tetris/data/blockColor";
-import {Block} from "../tetris/state/block";
+import {BlockColor} from "../tetris/state/block/blockColor";
+import {Block} from "../tetris/state/block/block";
 
 export interface BlockRenderer {
     drawBlock(ctx: CanvasRenderingContext2D, block: Block, x: number, y: number, blockSize: number): void;

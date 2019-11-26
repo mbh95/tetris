@@ -1,5 +1,5 @@
 import {Map} from "immutable";
-import {Block} from "../block";
+import {Block} from "../block/block";
 import {Position} from "../position";
 
 export class Orientation {

@@ -1,5 +1,5 @@
 import {List, Map, Range} from "immutable";
-import {Block} from "../state/block";
+import {Block} from "../state/block/block";
 import {Orientation} from "../state/piece/orientation";
 import {Transition} from "../state/piece/transition";
 import {Position} from "../state/position";

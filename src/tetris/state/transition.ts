@@ -4,7 +4,6 @@ import {Piece} from "./piece/piece";
 import {AnyGameState} from "./tetrisGameState";
 
 export enum TransitionType {
-    UNKNOWN = "UNKNOWN",
     TIME_LOCK = "TIME_LOCK",
     GRAVITY_FALL = "GRAVITY_FALL",
     SOFT_DROP_FALL = "SOFT_DROP_FALL",
@@ -52,14 +51,14 @@ const pieceChangeTransitionSet: Set<TransitionType> = Set([
     TransitionType.ROTATE_CCW,
     TransitionType.ACTION_HOLD]);
 
-export function isPieceChangeTransition(transitionType: TransitionType) {
+export function isPieceChangeTransition(transitionType: TransitionType): boolean {
     return pieceChangeTransitionSet.contains(transitionType);
 }
 
-export function isRotationTransition(transitionType: TransitionType) {
+export function isRotationTransition(transitionType: TransitionType): boolean {
     return transitionType === TransitionType.ROTATE_CW || transitionType === TransitionType.ROTATE_CCW;
 }
 
-export function isPieceLockTransition(transitionType: TransitionType) {
+export function isPieceLockTransition(transitionType: TransitionType): boolean {
     return transitionType === TransitionType.TIME_LOCK || transitionType === TransitionType.HARD_DROP_LOCK;
 }

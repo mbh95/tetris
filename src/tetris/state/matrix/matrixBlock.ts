@@ -1,4 +1,4 @@
-import {Block} from "../block";
+import {Block} from "../block/block";
 import {Piece} from "../piece/piece";
 import {PieceBlock} from "../piece/pieceBlock";
 import {Position} from "../position";

@@ -1,4 +1,4 @@
-import {Block} from "../block";
+import {Block} from "../block/block";
 import {Position} from "../position";
 import {Piece} from "../piece/piece";
 import {Map, Range, Record, Seq, Set} from "immutable";

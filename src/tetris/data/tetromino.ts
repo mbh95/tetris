@@ -1,8 +1,8 @@
 import {List} from "immutable";
-import {Block} from "../state/block";
+import {Block} from "../state/block/block";
 import {PiecePrototype} from "../state/piece/piecePrototype";
 import * as PieceUtils from "../util/pieceUtils";
-import {BlockColor} from "./blockColor";
+import {BlockColor} from "../state/block/blockColor";
 import BlockTable = PieceUtils.BlockTable;
 import KickTable = PieceUtils.KickTable;
 

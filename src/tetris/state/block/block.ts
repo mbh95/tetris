@@ -1,5 +1,5 @@
 import {Record} from "immutable";
-import {BlockColor} from "../data/blockColor";
+import {BlockColor} from "./blockColor";
 
 interface BlockParams {
     color?: BlockColor;

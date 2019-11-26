@@ -32,7 +32,7 @@ export class MatrixView {
         this.ctx2d = this.canvas.getContext("2d")!;
     }
 
-    getWidth() {
+    getWidth(): number {
         return this.visibleCols * this.blockSize;
     }
 
